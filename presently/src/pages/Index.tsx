@@ -1,5 +1,4 @@
 import { useState } from "react";
-import TopBar from "@/components/TopBar";
 import AppSidebar from "@/components/AppSidebar";
 import TeleprompterView from "@/components/TeleprompterView";
 import ReadingTestView from "@/components/ReadingTestView";
@@ -47,7 +46,6 @@ const Index = () => {
 
   return (
     <div className="h-screen flex flex-col bg-background overflow-hidden">
-      <TopBar />
       <div className="flex flex-1 overflow-hidden">
         <AppSidebar
           activeView={activeView}
