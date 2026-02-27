@@ -5,6 +5,8 @@ import {
   BarChart3,
   Cloud,
   Settings,
+  PanelLeftClose,
+  PanelLeft,
   type LucideIcon,
 } from "lucide-react";
 import {
@@ -32,15 +34,35 @@ export const navItems: NavItem[] = [
 interface AppSidebarProps {
   activeView: string;
   onNavigate: (id: string) => void;
+  collapsed: boolean;
+  onToggle: () => void;
 }
 
-const AppSidebar = ({ activeView, onNavigate }: AppSidebarProps) => {
+const AppSidebar = ({
+  activeView,
+  onNavigate,
+  collapsed,
+  onToggle,
+}: AppSidebarProps) => {
   return (
-    <div className="w-56 flex-shrink-0 bg-sidebar border-r border-sidebar-border flex flex-col">
+    <div
+      className={`flex-shrink-0 bg-sidebar border-r border-sidebar-border flex flex-col transition-all duration-200 ${
+        collapsed ? "w-14" : "w-56"
+      }`}
+    >
       <nav className="flex-1 py-3 px-2 space-y-0.5">
         {navItems.map((item) => {
           const isActive = activeView === item.id;
           const Icon = item.icon;
+
+          const buttonContent = (
+            <>
+              <Icon
+                className={`w-4 h-4 flex-shrink-0 ${isActive ? "text-primary" : ""}`}
+              />
+              {!collapsed && <span>{item.label}</span>}
+            </>
+          );
 
           if (item.disabled) {
             return (
@@ -48,10 +70,11 @@ const AppSidebar = ({ activeView, onNavigate }: AppSidebarProps) => {
                 <TooltipTrigger asChild>
                   <button
                     onClick={() => onNavigate(item.id)}
-                    className="w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm opacity-40 cursor-default transition-colors"
+                    className={`w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm opacity-40 cursor-default transition-colors ${
+                      collapsed ? "justify-center" : ""
+                    }`}
                   >
-                    <Icon className="w-4 h-4" />
-                    <span>{item.label}</span>
+                    {buttonContent}
                   </button>
                 </TooltipTrigger>
                 <TooltipContent
@@ -64,26 +87,58 @@ const AppSidebar = ({ activeView, onNavigate }: AppSidebarProps) => {
             );
           }
 
-          return (
+          // In collapsed mode, show tooltip with label
+          const button = (
             <button
               key={item.id}
               onClick={() => onNavigate(item.id)}
               className={`w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-all duration-150
+                  ${collapsed ? "justify-center" : ""}
                   ${
                     isActive
                       ? "bg-accent text-foreground font-medium"
                       : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
                   }`}
             >
-              <Icon className={`w-4 h-4 ${isActive ? "text-primary" : ""}`} />
-              <span>{item.label}</span>
+              {buttonContent}
             </button>
           );
+
+          if (collapsed) {
+            return (
+              <Tooltip key={item.id} delayDuration={200}>
+                <TooltipTrigger asChild>{button}</TooltipTrigger>
+                <TooltipContent
+                  side="right"
+                  className="bg-surface-overlay text-foreground border-border text-xs"
+                >
+                  {item.label}
+                </TooltipContent>
+              </Tooltip>
+            );
+          }
+
+          return button;
         })}
       </nav>
 
-      <div className="px-4 py-3 border-t border-sidebar-border">
-        <p className="text-[11px] text-muted-foreground">ReadFlow v0.1.0</p>
+      <div
+        className={`px-2 py-3 border-t border-sidebar-border ${collapsed ? "flex justify-center" : "px-4"} flex flex-row items-center justify-between`}
+      >
+        {!collapsed && (
+          <p className="text-[11px] text-muted-foreground ">ReadFlow v0.1.0</p>
+        )}
+        <button
+          onClick={onToggle}
+          className="p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-sidebar-accent transition-colors"
+          title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+        >
+          {collapsed ? (
+            <PanelLeft className="w-4 h-4" />
+          ) : (
+            <PanelLeftClose className="w-4 h-4" />
+          )}
+        </button>
       </div>
     </div>
   );
