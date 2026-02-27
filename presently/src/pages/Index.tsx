@@ -1,15 +1,20 @@
 import { useState } from "react";
-
+import TopBar from "@/components/TopBar";
+import AppSidebar from "@/components/AppSidebar";
 import TeleprompterView from "@/components/TeleprompterView";
 import ReadingTestView from "@/components/ReadingTestView";
 import ReadingProfileView from "@/components/ReadingProfileView";
 import SettingsView from "@/components/SettingsView";
 import EmptyState from "@/components/EmptyState";
-import TopBar from "@/components/TopBar";
-import AppSidebar from "@/components/AppSidebar";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const Index = () => {
   const [activeView, setActiveView] = useState("teleprompter");
+  const isMobile = useIsMobile();
+  const [collapsed, setCollapsed] = useState(false);
+
+  // Auto-collapse on small screens
+  const sidebarCollapsed = isMobile || collapsed;
 
   const renderView = () => {
     switch (activeView) {
@@ -44,8 +49,13 @@ const Index = () => {
     <div className="h-screen flex flex-col bg-background overflow-hidden">
       <TopBar />
       <div className="flex flex-1 overflow-hidden">
-        <AppSidebar activeView={activeView} onNavigate={setActiveView} />
-        <main className="flex-1 flex flex-col overflow-hidden">
+        <AppSidebar
+          activeView={activeView}
+          onNavigate={setActiveView}
+          collapsed={sidebarCollapsed}
+          onToggle={() => setCollapsed(!collapsed)}
+        />
+        <main className="flex-1 flex flex-col overflow-hidden min-w-0">
           {renderView()}
         </main>
       </div>
