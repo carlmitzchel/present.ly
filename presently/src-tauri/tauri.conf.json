@@ -4,9 +4,9 @@
   "version": "0.1.0",
   "identifier": "com.chy.presently",
   "build": {
-    "beforeDevCommand": "yarn dev",
-    "devUrl": "http://localhost:1420",
-    "beforeBuildCommand": "yarn build",
+    "beforeDevCommand": "npm run dev",
+    "devUrl": "http://localhost:8080",
+    "beforeBuildCommand": "npm run build",
     "frontendDist": "../dist"
   },
   "app": {
