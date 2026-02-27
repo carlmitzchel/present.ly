@@ -13,16 +13,16 @@ const TeleprompterView = () => {
     /* h-screen and overflow-hidden ensures the app itself doesn't scroll, only the text area does */
     <div className="h-screen flex flex-col bg-background animate-fade-in overflow-hidden">
       {/* Controls bar (Fixed at top) */}
-      <div className="flex items-center gap-6 px-6 py-4 border-b border-border bg-background/95 backdrop-blur z-10">
-        <div className="flex items-center gap-3 flex-1">
-          <label className="text-xs font-medium text-muted-foreground w-16">
+      <div className="flex flex-wrap items-center gap-4 sm:gap-6 px-4 sm:px-6 py-4 border-b border-border">
+        <div className="flex items-center gap-3 flex-1 min-w-[180px]">
+          <label className="text-xs font-medium text-muted-foreground w-16 flex-shrink-0">
             Font Size
           </label>
           <Slider
             value={fontSize}
             onValueChange={setFontSize}
             min={18}
-            max={100}
+            max={56}
             step={2}
             className="w-36"
           />
@@ -31,8 +31,8 @@ const TeleprompterView = () => {
           </span>
         </div>
 
-        <div className="flex items-center gap-3 flex-1">
-          <label className="text-xs font-medium text-muted-foreground w-16">
+        <div className="flex items-center gap-3 flex-1 min-w-[180px]">
+          <label className="text-xs font-medium text-muted-foreground w-16 flex-shrink-0">
             Speed
           </label>
           <Slider
@@ -65,7 +65,6 @@ const TeleprompterView = () => {
           </button>
         </div>
       </div>
-
       {/* Text display area 
           'flex-1' takes up remaining space.
           'min-h-0' is the magic CSS that allows overflow-y to work inside a flex container.
@@ -86,7 +85,7 @@ const TeleprompterView = () => {
       </div>
 
       {/* Status bar (Fixed at bottom) */}
-      <div className="px-6 py-3 bg-status-bar border-t border-border">
+      <div className="px-6 py-5 bg-status-bar border-t border-border">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-6">
             <span className="text-[11px] text-muted-foreground">
