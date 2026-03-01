@@ -46,11 +46,17 @@ const AppSidebar = ({
 }: AppSidebarProps) => {
   return (
     <div
-      className={`flex-shrink-0 bg-sidebar border-r border-sidebar-border flex flex-col transition-all duration-200 ${
+      className={`shrink-0 bg-sidebar border-r border-sidebar-border flex flex-col transition-all duration-200 ${
         collapsed ? "w-14" : "w-56"
       }`}
     >
       <nav className="flex-1 py-3 px-2 space-y-0.5">
+        <h1
+          className={`text-2xl font-bold mb-8 ${collapsed ? "text-center bg-accent rounded-md p-2" : ""}`}
+        >
+          {collapsed ? "P" : "presently."}
+        </h1>
+
         {navItems.map((item) => {
           const isActive = activeView === item.id;
           const Icon = item.icon;
@@ -58,7 +64,7 @@ const AppSidebar = ({
           const buttonContent = (
             <>
               <Icon
-                className={`w-4 h-4 flex-shrink-0 ${isActive ? "text-primary" : ""}`}
+                className={`w-4 h-4 shrink-0 ${isActive ? "text-primary" : ""}`}
               />
               {!collapsed && <span>{item.label}</span>}
             </>
