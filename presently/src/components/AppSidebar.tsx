@@ -1,8 +1,8 @@
 import {
   MonitorPlay,
-  BookOpenCheck,
-  UserCircle,
-  BarChart3,
+  // BookOpenCheck,
+  // UserCircle,
+  // BarChart3,
   Cloud,
   Settings,
   PanelLeftClose,
@@ -24,9 +24,9 @@ export type NavItem = {
 
 export const navItems: NavItem[] = [
   { id: "teleprompter", label: "Teleprompter", icon: MonitorPlay },
-  { id: "reading-test", label: "Reading Test", icon: BookOpenCheck },
-  { id: "reading-profile", label: "Reading Profile", icon: UserCircle },
-  { id: "analytics", label: "Analytics", icon: BarChart3, disabled: true },
+  // { id: "reading-test", label: "Reading Test", icon: BookOpenCheck },
+  // { id: "reading-profile", label: "Reading Profile", icon: UserCircle },
+  // { id: "analytics", label: "Analytics", icon: BarChart3, disabled: true },
   { id: "cloud-sync", label: "Cloud Sync", icon: Cloud, disabled: true },
   { id: "settings", label: "Settings", icon: Settings },
 ];

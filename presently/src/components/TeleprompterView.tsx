@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Play, Pause, RotateCcw, File } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "./ui/button";
@@ -12,9 +12,50 @@ const TeleprompterView = () => {
   const [scrollSpeed, setScrollSpeed] = useState([3]);
   const [textContent, setTextContent] = useState(`Initial sample text...`);
 
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const requestRef = useRef<number>(0);
+  const speedRef = useRef(scrollSpeed[0]);
+
+  useEffect(() => {
+    speedRef.current = scrollSpeed[0];
+  }, [scrollSpeed]);
+
+  const animate = () => {
+    if (scrollContainerRef.current && isPlaying) {
+      const pixelsPerFrame = speedRef.current * 0.2;
+      scrollContainerRef.current.scrollTop += pixelsPerFrame;
+
+      const { scrollTop, scrollHeight, clientHeight } =
+        scrollContainerRef.current;
+      if (scrollTop + clientHeight >= scrollHeight - 5) {
+        setIsPlaying(false);
+        return;
+      }
+    }
+    requestRef.current = requestAnimationFrame(animate);
+  };
+
+  useEffect(() => {
+    if (isPlaying) {
+      requestRef.current = requestAnimationFrame(animate);
+    } else {
+      if (requestRef.current) cancelAnimationFrame(requestRef.current);
+    }
+    return () => {
+      if (requestRef.current) cancelAnimationFrame(requestRef.current);
+    };
+  }, [isPlaying]);
+
+  // 3. Reset Function
+  const handleReset = () => {
+    setIsPlaying(false);
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
   const handleLoadFile = async () => {
     try {
-      // Open a selection dialog for text files
       const selected = await open({
         multiple: false,
         filters: [
@@ -26,10 +67,9 @@ const TeleprompterView = () => {
       });
 
       if (selected) {
-        // Read the file content
         const content = await readTextFile(selected as string);
         setTextContent(content);
-        setIsPlaying(false); // Stop playing when new text is loaded
+        setIsPlaying(false);
       }
     } catch (error) {
       console.error("Failed to load file:", error);
@@ -37,7 +77,6 @@ const TeleprompterView = () => {
   };
 
   return (
-    /* h-screen and overflow-hidden ensures the app itself doesn't scroll, only the text area does */
     <div className="h-screen flex flex-col bg-background animate-fade-in overflow-hidden">
       {/* Controls bar (Fixed at top) */}
       <div className="flex flex-wrap items-center gap-4 sm:gap-6 px-4 sm:px-6 py-4 border-b border-border justify-between">
@@ -50,7 +89,7 @@ const TeleprompterView = () => {
               value={fontSize}
               onValueChange={setFontSize}
               min={18}
-              max={56}
+              max={128}
               step={2}
               className="w-36"
             />
@@ -96,7 +135,11 @@ const TeleprompterView = () => {
             <File className="w-4 h-4" />
             Load File
           </Button>
-          <Button variant="outline" className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            className="flex items-center gap-2"
+            onClick={handleReset}
+          >
             <RotateCcw className="w-4 h-4" />
           </Button>
         </div>
@@ -105,7 +148,11 @@ const TeleprompterView = () => {
           'flex-1' takes up remaining space.
           'min-h-0' is the magic CSS that allows overflow-y to work inside a flex container.
       */}
-      <div className="flex-1 overflow-y-auto min-h-0 py-20 px-6 custom-scrollbar">
+      <div
+        ref={scrollContainerRef}
+        className="flex-1 overflow-y-auto min-h-0 py-[40vh] px-6 custom-scrollbar scroll-smooth"
+      >
+        {" "}
         <div className="max-w-4xl mx-auto">
           <p
             className="text-foreground leading-relaxed whitespace-pre-line text-center transition-all duration-200"
