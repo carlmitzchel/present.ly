@@ -17,9 +17,20 @@
   "app": {
     "windows": [
       {
-        "title": "presently",
+        "label": "main",
+        "title": "Teleprompter",
+        "width": 1024,
+        "height": 768
+      },
+      {
+        "label": "popout",
+        "title": "Teleprompter Display",
         "width": 800,
-        "height": 600
+        "height": 600,
+        "visible": false,
+        "alwaysOnTop": true,
+        "skipTaskbar": false,
+        "decorations": true
       }
     ],
     "security": {

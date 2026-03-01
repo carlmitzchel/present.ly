@@ -9,6 +9,11 @@
     "sql:default",
     "dialog:allow-open",
     "fs:allow-read-text-file",
-    "fs:allow-exists"
+    "fs:allow-exists",
+    "core:event:allow-emit",
+    "core:event:allow-listen",
+    "core:window:allow-create",
+    "core:window:allow-set-focus",
+    "core:window:allow-show"
   ]
 }
