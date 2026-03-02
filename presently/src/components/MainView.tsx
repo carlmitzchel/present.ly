@@ -6,6 +6,7 @@ import { useTeleprompterState } from "@/hooks/useTeleprompterState";
 import { open } from "@tauri-apps/plugin-dialog";
 import { readTextFile } from "@tauri-apps/plugin-fs";
 import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
+import { useEffect } from "react";
 
 const MainView = () => {
   const {
@@ -58,6 +59,18 @@ const MainView = () => {
   const handleReset = () => {
     setIsPlaying(false);
   };
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === " ") {
+        e.preventDefault();
+        setIsPlaying(!isPlaying);
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [isPlaying]);
 
   return (
     <div className="h-screen flex flex-col bg-background animate-fade-in overflow-hidden">

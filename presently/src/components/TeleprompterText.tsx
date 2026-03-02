@@ -1,4 +1,6 @@
 import { useEffect, useRef } from "react";
+import { Button } from "./ui/button";
+import { ExternalLink, Pause, Play, RotateCcw } from "lucide-react";
 
 const LINE_HEIGHT = 1;
 const LINES_PER_SECOND_AT_1X = 1;
