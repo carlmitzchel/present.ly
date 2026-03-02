@@ -1,8 +1,8 @@
 import TeleprompterText from "@/components/TeleprompterText";
 import { useTeleprompterState } from "@/hooks/useTeleprompterState";
 import { useEffect } from "react";
-import { Button } from "./ui/button";
-import { Pause, Play, RotateCcw } from "lucide-react";
+// import { Button } from "./ui/button";
+// import { Pause, Play, RotateCcw } from "lucide-react";
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 
 const PopoutView = () => {

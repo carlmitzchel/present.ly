@@ -1,5 +1,5 @@
 // teleprompterEvents.ts
-import { emit, emitTo, listen } from "@tauri-apps/api/event";
+import { emitTo, listen } from "@tauri-apps/api/event";
 
 export interface TeleprompterState {
   isPlaying: boolean;
