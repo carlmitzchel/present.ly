@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 
-const LINE_HEIGHT = 1.5;
+const LINE_HEIGHT = 1;
 const LINES_PER_SECOND_AT_1X = 1;
 const MAX_DELTA_MS = 80;
 

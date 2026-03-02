@@ -1,9 +1,11 @@
-import { useEffect, useRef, useState } from "react";
 import {
   emitState,
   listenState,
+  listenStateRequest,
+  requestState,
   TeleprompterState,
 } from "@/lib/teleprompterEvents";
+import { useEffect, useRef, useState } from "react";
 
 export const useTeleprompterState = (role: "main" | "popout") => {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -12,20 +14,33 @@ export const useTeleprompterState = (role: "main" | "popout") => {
   const [textContent, setTextContent] = useState("Initial sample text...");
   const isMounted = useRef(true);
 
-  // Main window: emit on every state change
+  // Collect latest state in a ref so the request listener always has it
+  const stateRef = useRef({ isPlaying, fontSize: fontSize[0], scrollSpeed: scrollSpeed[0], textContent });
+  useEffect(() => {
+    stateRef.current = { isPlaying, fontSize: fontSize[0], scrollSpeed: scrollSpeed[0], textContent };
+  }, [isPlaying, fontSize, scrollSpeed, textContent]);
+
+  // Main: emit on state change
   useEffect(() => {
     if (role !== "main") return;
-    emitState({
-      isPlaying,
-      fontSize: fontSize[0],
-      scrollSpeed: scrollSpeed[0],
-      textContent,
-    });
+    emitState(stateRef.current);
   }, [isPlaying, fontSize, scrollSpeed, textContent, role]);
 
-  // Popout window: listen and mirror state
+  // Main: respond to popout's request by re-emitting current state
+  useEffect(() => {
+    if (role !== "main") return;
+    const unlisten = listenStateRequest(() => {
+      emitState(stateRef.current);
+    });
+    return () => { unlisten.then((fn) => fn()); };
+  }, [role]);
+
+  // Popout: listen for state updates
   useEffect(() => {
     if (role !== "popout") return;
+    
+    isMounted.current = true; // 👈 reset on each effect run
+
     const unlisten = listenState((state: TeleprompterState) => {
       if (!isMounted.current) return;
       setIsPlaying(state.isPlaying);
@@ -33,20 +48,14 @@ export const useTeleprompterState = (role: "main" | "popout") => {
       setScrollSpeed([state.scrollSpeed]);
       setTextContent(state.textContent);
     });
+
+    requestState();
+
     return () => {
       isMounted.current = false;
       unlisten.then((fn) => fn());
     };
   }, [role]);
 
-  return {
-    isPlaying,
-    setIsPlaying,
-    fontSize,
-    setFontSize,
-    scrollSpeed,
-    setScrollSpeed,
-    textContent,
-    setTextContent,
-  };
+  return { isPlaying, setIsPlaying, fontSize, setFontSize, scrollSpeed, setScrollSpeed, textContent, setTextContent };
 };

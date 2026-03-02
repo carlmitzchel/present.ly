@@ -1,4 +1,5 @@
-import { emit, listen } from "@tauri-apps/api/event";
+// teleprompterEvents.ts
+import { emit, emitTo, listen } from "@tauri-apps/api/event";
 
 export interface TeleprompterState {
   isPlaying: boolean;
@@ -7,8 +8,27 @@ export interface TeleprompterState {
   textContent: string;
 }
 
-export const emitState = (state: TeleprompterState) =>
-  emit("teleprompter:state", state);
+export const emitState = (state: TeleprompterState) => {
+  console.log("[emit] emitting state:", state);
+  return emitTo("*", "teleprompter:state", state);
+};
+
+export const requestState = () => {
+  console.log("[popout] sending state request");
+  return emitTo("*", "teleprompter:request-state");
+};
+
 
 export const listenState = (cb: (state: TeleprompterState) => void) =>
-  listen<TeleprompterState>("teleprompter:state", (e) => cb(e.payload));
+  listen<TeleprompterState>("teleprompter:state", (e) => {
+    console.log("[listen] received state:", e.payload);
+    cb(e.payload);
+  });
+
+export const listenStateRequest = (cb: () => void) =>
+  listen("teleprompter:request-state", () => {
+    console.log("[main] received state request from popout");
+    cb();
+  });
+
+  
