@@ -125,7 +125,10 @@ const MainView = () => {
         </div>
 
         <div className="flex items-center gap-2">
-          <Button onClick={() => setIsPlaying(!isPlaying)}>
+          <Button
+            onClick={() => setIsPlaying(!isPlaying)}
+            variant={isPlaying ? "destructive" : "outline"}
+          >
             {isPlaying ? (
               <Pause className="w-4 h-4" />
             ) : (
@@ -173,9 +176,9 @@ const MainView = () => {
               <span className="text-foreground font-medium">00:00</span> elapsed
             </span>
           </div>
-          <span className="text-[11px] text-muted-foreground uppercase tracking-wider">
+          {/* <span className="text-[11px] text-muted-foreground uppercase tracking-wider">
             Mode: <span className="text-foreground">Automatic Scroll</span>
-          </span>
+          </span> */}
         </div>
       </div>
     </div>

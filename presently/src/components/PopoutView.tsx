@@ -25,10 +25,24 @@ const PopoutView = () => {
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown); // 👈 always clean up
   }, []);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === " ") {
+        e.preventDefault();
+        setIsPlaying(!isPlaying);
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [isPlaying]);
+
   return (
     <div className="h-screen flex flex-col bg-background overflow-hidden">
-      <div className="flex items-center justify-end gap-2 w-full  py-2 px-4">
+      {/* <div className="flex items-center justify-end gap-2 w-full  py-2 px-4">
         <Button
+          variant={isPlaying ? "destructive" : "outline"}
           onClick={() => (isPlaying ? setIsPlaying(false) : setIsPlaying(true))}
         >
           {isPlaying ? (
@@ -41,7 +55,7 @@ const PopoutView = () => {
         <Button variant="outline" onClick={() => setIsPlaying(false)}>
           <RotateCcw className="w-4 h-4" />
         </Button>
-      </div>
+      </div> */}
       <TeleprompterText
         isPlaying={isPlaying}
         fontSize={fontSize[0]}
