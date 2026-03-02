@@ -44,12 +44,12 @@ const MainView = () => {
     }
     new WebviewWindow("popout", {
       url: "/popout",
-      title: "Teleprompter Display",
+      title: "presently",
       width: 800,
       height: 600,
       alwaysOnTop: true,
       skipTaskbar: false,
-      decorations: true,
+      decorations: false,
       resizable: true,
       focus: true,
     });
