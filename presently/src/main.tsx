@@ -4,6 +4,7 @@ import App from "./App";
 import PopoutView from "./components/PopoutView";
 import { initDB } from "./lib/db";
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
+import { ThemeProvider } from "./components/theme-provider";
 
 const init = async () => {
   const label = getCurrentWebviewWindow().label;
@@ -19,7 +20,9 @@ const init = async () => {
 
   ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
     <React.StrictMode>
-      {label === "popout" ? <PopoutView /> : <App />}
+      <ThemeProvider attribute="class" defaultTheme="dark">
+        {label === "popout" ? <PopoutView /> : <App />}
+      </ThemeProvider>
     </React.StrictMode>,
   );
 };

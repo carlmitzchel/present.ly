@@ -52,7 +52,7 @@ const AppSidebar = ({
     >
       <nav className="flex-1 py-3 px-2 space-y-0.5">
         <h1
-          className={`text-2xl font-bold mb-8 ${collapsed ? "text-center bg-accent rounded-md p-2" : ""}`}
+          className={`text-2xl font-bold mb-8 text-primary ${collapsed ? "text-center bg-accent rounded-md p-2" : ""}`}
         >
           {collapsed ? "P" : "presently."}
         </h1>

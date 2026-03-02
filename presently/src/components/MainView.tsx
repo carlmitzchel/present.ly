@@ -30,6 +30,7 @@ import {
   setSetting,
   getSetting,
 } from "@/lib/db";
+import { ModeToggle } from "@/components/ModeToggle";
 
 const MainView = () => {
   const {
@@ -292,6 +293,7 @@ const MainView = () => {
           <Button variant="outline" onClick={handlePopout}>
             <ExternalLink className="w-4 h-4" />
           </Button>
+          <ModeToggle />
         </div>
       </div>
 
