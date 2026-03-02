@@ -6,8 +6,14 @@ import { Pause, Play, RotateCcw } from "lucide-react";
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 
 const PopoutView = () => {
-  const { isPlaying, setIsPlaying, fontSize, scrollSpeed, textContent } =
-    useTeleprompterState("popout");
+  const {
+    isPlaying,
+    setIsPlaying,
+    fontSize,
+    scrollSpeed,
+    textContent,
+    isFlipped,
+  } = useTeleprompterState("popout");
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -41,6 +47,7 @@ const PopoutView = () => {
         fontSize={fontSize[0]}
         scrollSpeed={scrollSpeed[0]}
         textContent={textContent}
+        isFlipped={isFlipped}
         onEnd={() => setIsPlaying(false)}
       />
     </div>

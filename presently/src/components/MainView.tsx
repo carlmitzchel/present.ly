@@ -1,4 +1,11 @@
-import { Play, Pause, RotateCcw, File, ExternalLink } from "lucide-react";
+import {
+  Play,
+  Pause,
+  RotateCcw,
+  File,
+  ExternalLink,
+  FlipHorizontal,
+} from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
 import TeleprompterText from "@/components/TeleprompterText";
@@ -18,6 +25,8 @@ const MainView = () => {
     setScrollSpeed,
     textContent,
     setTextContent,
+    isFlipped,
+    setIsFlipped,
   } = useTeleprompterState("main");
 
   const handleLoadFile = async () => {
@@ -124,6 +133,13 @@ const MainView = () => {
             )}
             {isPlaying ? "Pause" : "Play"}
           </Button>
+          <Button
+            variant={isFlipped ? "default" : "outline"}
+            onClick={() => setIsFlipped(!isFlipped)}
+          >
+            <FlipHorizontal className="w-4 h-4" />
+            Flip
+          </Button>
           <Button variant="outline" onClick={handleLoadFile}>
             <File className="w-4 h-4" />
             Load File
@@ -142,6 +158,7 @@ const MainView = () => {
         fontSize={fontSize[0]}
         scrollSpeed={scrollSpeed[0]}
         textContent={textContent}
+        isFlipped={isFlipped}
         onEnd={() => setIsPlaying(false)}
       />
 

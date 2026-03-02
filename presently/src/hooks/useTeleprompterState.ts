@@ -12,19 +12,20 @@ export const useTeleprompterState = (role: "main" | "popout") => {
   const [fontSize, setFontSize] = useState([32]);
   const [scrollSpeed, setScrollSpeed] = useState([3]);
   const [textContent, setTextContent] = useState("Initial sample text...");
+  const [isFlipped, setIsFlipped] = useState(false);
   const isMounted = useRef(true);
 
   // Collect latest state in a ref so the request listener always has it
-  const stateRef = useRef({ isPlaying, fontSize: fontSize[0], scrollSpeed: scrollSpeed[0], textContent });
+  const stateRef = useRef({ isPlaying, fontSize: fontSize[0], scrollSpeed: scrollSpeed[0], textContent, isFlipped });
   useEffect(() => {
-    stateRef.current = { isPlaying, fontSize: fontSize[0], scrollSpeed: scrollSpeed[0], textContent };
-  }, [isPlaying, fontSize, scrollSpeed, textContent]);
+    stateRef.current = { isPlaying, fontSize: fontSize[0], scrollSpeed: scrollSpeed[0], textContent, isFlipped };
+  }, [isPlaying, fontSize, scrollSpeed, textContent, isFlipped]);
 
   // Main: emit on state change
   useEffect(() => {
     if (role !== "main") return;
     emitState(stateRef.current);
-  }, [isPlaying, fontSize, scrollSpeed, textContent, role]);
+  }, [isPlaying, fontSize, scrollSpeed, textContent, isFlipped, role]);
 
   // Main: respond to popout's request by re-emitting current state
   useEffect(() => {
@@ -47,6 +48,7 @@ export const useTeleprompterState = (role: "main" | "popout") => {
       setFontSize([state.fontSize]);
       setScrollSpeed([state.scrollSpeed]);
       setTextContent(state.textContent);
+      setIsFlipped(state.isFlipped);
     });
 
     requestState();
@@ -57,5 +59,16 @@ export const useTeleprompterState = (role: "main" | "popout") => {
     };
   }, [role]);
 
-  return { isPlaying, setIsPlaying, fontSize, setFontSize, scrollSpeed, setScrollSpeed, textContent, setTextContent };
+  return { 
+    isPlaying, 
+    setIsPlaying, 
+    fontSize, 
+    setFontSize, 
+    scrollSpeed, 
+    setScrollSpeed, 
+    textContent, 
+    setTextContent,
+    isFlipped,
+    setIsFlipped
+  };
 };

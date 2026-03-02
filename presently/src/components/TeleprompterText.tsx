@@ -1,6 +1,4 @@
 import { useEffect, useRef } from "react";
-import { Button } from "./ui/button";
-import { ExternalLink, Pause, Play, RotateCcw } from "lucide-react";
 
 const LINE_HEIGHT = 1;
 const LINES_PER_SECOND_AT_1X = 1;
@@ -11,6 +9,7 @@ interface Props {
   fontSize: number;
   scrollSpeed: number;
   textContent: string;
+  isFlipped: boolean;
   onEnd: () => void;
 }
 
@@ -19,6 +18,7 @@ const TeleprompterText = ({
   fontSize,
   scrollSpeed,
   textContent,
+  isFlipped,
   onEnd,
 }: Props) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -83,6 +83,7 @@ const TeleprompterText = ({
             fontSize: `${fontSize}px`,
             lineHeight: 1.5,
             fontWeight: 500,
+            transform: isFlipped ? "scaleX(-1)" : "none",
           }}
         >
           {textContent}
