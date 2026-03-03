@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import TeleprompterText from "@/components/TeleprompterText";
 import { useTeleprompterState } from "@/hooks/useTeleprompterState";
 import { useSpeechEstimation } from "@/hooks/useSpeechEstimation";
+import { useSpeechElapsed } from "@/hooks/useSpeechElapsed";
 import GeminiLoader from "@/components/GeminiLoader";
 import { open } from "@tauri-apps/plugin-dialog";
 import { readTextFile } from "@tauri-apps/plugin-fs";
@@ -54,6 +55,11 @@ const MainView = () => {
   const [resetKey, setResetKey] = useState(0);
   const [isLoadingFile, setIsLoadingFile] = useState(false);
   const { estimateFormatted } = useSpeechEstimation(textContent);
+  const { elapsedFormatted } = useSpeechElapsed(
+    textContent,
+    isPlaying,
+    resetKey,
+  );
 
   const startLoadingAnimation = () => {
     setIsLoadingFile(true);
@@ -336,7 +342,10 @@ const MainView = () => {
               <span className="text-foreground font-medium">142 </span>WPM
             </span>
             <span className="text-[11px] text-muted-foreground">
-              <span className="text-foreground font-medium">00:00 </span>elapsed
+              <span className="text-foreground font-medium">
+                {elapsedFormatted}{" "}
+              </span>
+              elapsed
             </span>
             <span className="text-[11px] text-muted-foreground">
               <span className="text-foreground font-medium">
