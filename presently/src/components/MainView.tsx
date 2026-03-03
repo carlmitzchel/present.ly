@@ -272,6 +272,7 @@ const MainView = () => {
           <Button
             variant={isFlipped ? "default" : "outline"}
             onClick={() => setIsFlipped(!isFlipped)}
+            className="w-20"
           >
             <FlipHorizontal className="w-4 h-4" />
             Flip
