@@ -129,13 +129,8 @@ const AppSidebar = ({
       </nav>
 
       <div
-        className={`px-2 py-3 border-t border-sidebar-border ${collapsed ? "flex justify-center" : "px-4"} flex flex-row items-center justify-between`}
+        className={`px-2 py-3  ${collapsed ? "flex justify-center" : "px-4"} flex flex-row items-center justify-between`}
       >
-        {!collapsed && (
-          <p className="text-[11px] text-muted-foreground ">
-            presently. v0.1.0
-          </p>
-        )}
         <button
           onClick={onToggle}
           className="p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-sidebar-accent transition-colors"

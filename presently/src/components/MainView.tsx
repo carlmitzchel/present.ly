@@ -49,6 +49,7 @@ const MainView = () => {
 
   const [recentFiles, setRecentFiles] = useState<RecentFile[]>([]);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const [resetKey, setResetKey] = useState(0);
 
   useEffect(() => {
     const initialize = async () => {
@@ -174,6 +175,7 @@ const MainView = () => {
 
   const handleReset = () => {
     setIsPlaying(false);
+    setResetKey((prev) => prev + 1);
   };
 
   useEffect(() => {
@@ -181,6 +183,10 @@ const MainView = () => {
       if (e.key === " ") {
         e.preventDefault();
         setIsPlaying(!isPlaying);
+      }
+      if (e.key === "r") {
+        e.preventDefault();
+        handleReset();
       }
     };
 
@@ -192,9 +198,9 @@ const MainView = () => {
     <div className="h-screen flex flex-col bg-background animate-fade-in overflow-hidden">
       {/* Controls bar */}
       <div className="flex flex-wrap items-center gap-4 sm:gap-6 px-4 sm:px-6 py-4 border-b border-border justify-between">
-        <div className="flex items-center gap-8">
-          <div className="flex items-center gap-3 flex-1 min-w-[180px]">
-            <label className="text-xs font-medium text-muted-foreground w-16 shrink-0">
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 flex-1 min-w-[180px]">
+            <label className="text-xs font-medium text-muted-foreground w-fit shrink-0">
               Font Size
             </label>
             <Slider
@@ -203,7 +209,7 @@ const MainView = () => {
               min={18}
               max={128}
               step={2}
-              className="w-36"
+              className="w-32"
             />
             <span className="text-xs text-muted-foreground w-8">
               {fontSize[0]}px
@@ -212,8 +218,8 @@ const MainView = () => {
 
           <div className="border-l border-border h-4" />
 
-          <div className="flex items-center gap-3 flex-1 min-w-[180px]">
-            <label className="text-xs font-medium text-muted-foreground w-16 shrink-0">
+          <div className="flex items-center gap-4 flex-1 min-w-[180px]">
+            <label className="text-xs font-medium text-muted-foreground w-fit shrink-0">
               Speed
             </label>
             <Slider
@@ -223,7 +229,7 @@ const MainView = () => {
               max={10}
               step={1}
               disabled={isPlaying}
-              className="w-36"
+              className="w-32"
             />
             <span className="text-xs text-muted-foreground w-8">
               {scrollSpeed[0]}x
@@ -299,6 +305,7 @@ const MainView = () => {
       </div>
 
       <TeleprompterText
+        key={resetKey}
         isPlaying={isPlaying}
         fontSize={fontSize[0]}
         scrollSpeed={scrollSpeed[0]}
