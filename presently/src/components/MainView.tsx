@@ -12,6 +12,8 @@ import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
 import TeleprompterText from "@/components/TeleprompterText";
 import { useTeleprompterState } from "@/hooks/useTeleprompterState";
+import { useSpeechEstimation } from "@/hooks/useSpeechEstimation";
+import GeminiLoader from "@/components/GeminiLoader";
 import { open } from "@tauri-apps/plugin-dialog";
 import { readTextFile } from "@tauri-apps/plugin-fs";
 import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
@@ -50,6 +52,15 @@ const MainView = () => {
   const [recentFiles, setRecentFiles] = useState<RecentFile[]>([]);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [resetKey, setResetKey] = useState(0);
+  const [isLoadingFile, setIsLoadingFile] = useState(false);
+  const { estimateFormatted } = useSpeechEstimation(textContent);
+
+  const startLoadingAnimation = () => {
+    setIsLoadingFile(true);
+    setTimeout(() => {
+      setIsLoadingFile(false);
+    }, 3000);
+  };
 
   useEffect(() => {
     const initialize = async () => {
@@ -123,6 +134,7 @@ const MainView = () => {
         filters: [{ name: "Text", extensions: ["txt", "md"] }],
       });
       if (selected) {
+        startLoadingAnimation();
         const path = selected as string;
         const filename = path.split("/").pop() || path;
         const content = await readTextFile(path);
@@ -140,6 +152,7 @@ const MainView = () => {
 
   const handleLoadRecent = async (path: string, filename: string) => {
     try {
+      startLoadingAnimation();
       console.log(`[MainView] Attempting to load recent file: ${path}`);
       const content = await readTextFile(path);
       console.log("[MainView] File content loaded successfully");
@@ -196,6 +209,7 @@ const MainView = () => {
 
   return (
     <div className="h-screen flex flex-col bg-background animate-fade-in overflow-hidden">
+      <GeminiLoader isLoading={isLoadingFile} />
       {/* Controls bar */}
       <div className="flex flex-wrap items-center gap-4 sm:gap-6 px-4 sm:px-6 py-4 border-b border-border justify-between">
         <div className="flex items-center gap-4">
@@ -319,10 +333,16 @@ const MainView = () => {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-6">
             <span className="text-[11px] text-muted-foreground">
-              <span className="text-foreground font-medium">142</span> WPM
+              <span className="text-foreground font-medium">142 </span>WPM
             </span>
             <span className="text-[11px] text-muted-foreground">
-              <span className="text-foreground font-medium">00:00</span> elapsed
+              <span className="text-foreground font-medium">00:00 </span>elapsed
+            </span>
+            <span className="text-[11px] text-muted-foreground">
+              <span className="text-foreground font-medium">
+                {estimateFormatted}{" "}
+              </span>
+              estimate
             </span>
           </div>
           {/* <span className="text-[11px] text-muted-foreground uppercase tracking-wider">
