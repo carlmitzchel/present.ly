@@ -31,6 +31,7 @@ import {
   getSetting,
 } from "@/lib/db";
 import { ModeToggle } from "@/components/ModeToggle";
+import BrandLogo from "@/components/BrandLogo";
 
 const MainView = () => {
   const {
@@ -160,7 +161,7 @@ const MainView = () => {
     }
     new WebviewWindow("popout", {
       url: "/popout",
-      title: "presently",
+      title: "presently.",
       width: 800,
       height: 600,
       alwaysOnTop: true,
@@ -191,7 +192,7 @@ const MainView = () => {
     <div className="h-screen flex flex-col bg-background animate-fade-in overflow-hidden">
       {/* Controls bar */}
       <div className="flex flex-wrap items-center gap-4 sm:gap-6 px-4 sm:px-6 py-4 border-b border-border justify-between">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-8">
           <div className="flex items-center gap-3 flex-1 min-w-[180px]">
             <label className="text-xs font-medium text-muted-foreground w-16 shrink-0">
               Font Size

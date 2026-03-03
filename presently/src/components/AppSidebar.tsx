@@ -14,6 +14,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import BrandLogo from "./BrandLogo";
 
 export type NavItem = {
   id: string;
@@ -37,7 +38,6 @@ interface AppSidebarProps {
   collapsed: boolean;
   onToggle: () => void;
 }
-
 const AppSidebar = ({
   activeView,
   onNavigate,
@@ -51,11 +51,11 @@ const AppSidebar = ({
       }`}
     >
       <nav className="flex-1 py-3 px-2 space-y-0.5">
-        <h1
-          className={`text-2xl font-bold mb-8 text-primary ${collapsed ? "text-center bg-accent rounded-md p-2" : ""}`}
+        <div
+          className={`mb-8 px-2 flex justify-center ${collapsed ? "" : "justify-start"}`}
         >
-          {collapsed ? "P" : "presently."}
-        </h1>
+          <BrandLogo collapsed={collapsed} size={collapsed ? 28 : 32} />
+        </div>
 
         {navItems.map((item) => {
           const isActive = activeView === item.id;
@@ -132,7 +132,9 @@ const AppSidebar = ({
         className={`px-2 py-3 border-t border-sidebar-border ${collapsed ? "flex justify-center" : "px-4"} flex flex-row items-center justify-between`}
       >
         {!collapsed && (
-          <p className="text-[11px] text-muted-foreground ">ReadFlow v0.1.0</p>
+          <p className="text-[11px] text-muted-foreground ">
+            presently. v0.1.0
+          </p>
         )}
         <button
           onClick={onToggle}

@@ -1,4 +1,4 @@
-import { Lock } from "lucide-react";
+import BrandLogo from "./BrandLogo";
 
 interface EmptyStateProps {
   title?: string;
@@ -12,8 +12,8 @@ const EmptyState = ({
   return (
     <div className="flex-1 flex items-center justify-center animate-fade-in">
       <div className="text-center max-w-sm">
-        <div className="mx-auto w-12 h-12 rounded-xl bg-muted flex items-center justify-center mb-5">
-          <Lock className="w-5 h-5 text-muted-foreground" />
+        <div className="mx-auto flex justify-center mb-6">
+          <BrandLogo size={48} showText={false} />
         </div>
         <h2 className="text-lg font-semibold text-foreground mb-2">{title}</h2>
         <p className="text-sm text-muted-foreground leading-relaxed mb-6">
