@@ -1,16 +1,4 @@
-import {
-  Play,
-  Pause,
-  RotateCcw,
-  File,
-  ExternalLink,
-  FlipHorizontal,
-  ChevronDown,
-  History,
-  FlipVertical,
-} from "lucide-react";
-import { Slider } from "@/components/ui/slider";
-import { Button } from "@/components/ui/button";
+import NavBar from "@/components/NavBar";
 import TeleprompterText from "@/components/TeleprompterText";
 import { useTeleprompterState } from "@/hooks/useTeleprompterState";
 import { useSpeechEstimation } from "@/hooks/useSpeechEstimation";
@@ -21,20 +9,12 @@ import { readTextFile } from "@tauri-apps/plugin-fs";
 import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { useEffect, useState } from "react";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
   addRecentFile,
   getRecentFiles,
   RecentFile,
   setSetting,
   getSetting,
 } from "@/lib/db";
-import { ModeToggle } from "@/components/ModeToggle";
 import BrandLogo from "@/components/BrandLogo";
 
 const MainView = () => {
@@ -51,6 +31,8 @@ const MainView = () => {
     setIsFlippedHorizontal,
     isFlippedVertical,
     setIsFlippedVertical,
+    textAlign,
+    setTextAlign,
   } = useTeleprompterState("main");
 
   const [recentFiles, setRecentFiles] = useState<RecentFile[]>([]);
@@ -127,6 +109,11 @@ const MainView = () => {
     if (isInitialLoad) return;
     setSetting("last_flipped_vertical", JSON.stringify(isFlippedVertical));
   }, [isFlippedVertical, isInitialLoad]);
+
+  useEffect(() => {
+    if (isInitialLoad) return;
+    setSetting("last_text_align", textAlign);
+  }, [textAlign, isInitialLoad]);
 
   const loadRecentFiles = async () => {
     try {
@@ -213,118 +200,25 @@ const MainView = () => {
     <div className="h-screen flex flex-col bg-background animate-fade-in overflow-hidden">
       <GeminiLoader isLoading={isLoadingFile} />
       {/* Controls bar */}
-      <div className="flex flex-wrap items-center gap-4 sm:gap-6 px-4 sm:px-6 py-4 border-b border-border justify-between">
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-4 flex-1 min-w-[180px]">
-            <label className="text-xs font-medium text-muted-foreground w-fit shrink-0">
-              Font Size
-            </label>
-            <Slider
-              value={fontSize}
-              onValueChange={setFontSize}
-              min={18}
-              max={128}
-              step={2}
-              className="w-32"
-            />
-            <span className="text-xs text-muted-foreground w-8">
-              {fontSize[0]}px
-            </span>
-          </div>
-
-          <div className="border-l border-border h-4" />
-
-          <div className="flex items-center gap-4 flex-1 min-w-[180px]">
-            <label className="text-xs font-medium text-muted-foreground w-fit shrink-0">
-              Speed
-            </label>
-            <Slider
-              value={scrollSpeed}
-              onValueChange={setScrollSpeed}
-              min={1}
-              max={10}
-              step={1}
-              disabled={isPlaying}
-              className="w-32"
-            />
-            <span className="text-xs text-muted-foreground w-8">
-              {scrollSpeed[0]}x
-            </span>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <Button
-            onClick={() => setIsPlaying(!isPlaying)}
-            variant={isPlaying ? "destructive" : "outline"}
-          >
-            {isPlaying ? (
-              <Pause className="w-4 h-4" />
-            ) : (
-              <Play className="w-4 h-4" />
-            )}
-            {isPlaying ? "Pause" : "Play"}
-          </Button>
-
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="gap-2">
-                <File className="w-4 h-4" />
-                Load File
-                <ChevronDown className="w-3 h-3 opacity-50" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-[200px]">
-              <DropdownMenuItem onSelect={handleLoadFile} className="gap-2">
-                <File className="w-4 h-4" />
-                Open File...
-              </DropdownMenuItem>
-
-              {recentFiles.length > 0 && (
-                <>
-                  <DropdownMenuSeparator />
-                  <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground flex items-center gap-2">
-                    <History className="w-3 h-3" />
-                    Recent Files
-                  </div>
-                  {recentFiles.map((file) => (
-                    <DropdownMenuItem
-                      key={file.path}
-                      onSelect={() =>
-                        handleLoadRecent(file.path, file.filename)
-                      }
-                      className="text-xs truncate max-w-[180px]"
-                    >
-                      {file.filename}
-                    </DropdownMenuItem>
-                  ))}
-                </>
-              )}
-            </DropdownMenuContent>
-          </DropdownMenu>
-
-          <Button
-            variant={isFlippedHorizontal ? "default" : "outline"}
-            onClick={() => setIsFlippedHorizontal(!isFlippedHorizontal)}
-          >
-            <FlipHorizontal className="w-4 h-4" />
-          </Button>
-          <Button
-            variant={isFlippedVertical ? "default" : "outline"}
-            onClick={() => setIsFlippedVertical(!isFlippedVertical)}
-          >
-            <FlipVertical className="w-4 h-4" />
-          </Button>
-
-          <Button variant="outline" onClick={handleReset}>
-            <RotateCcw className="w-4 h-4" />
-          </Button>
-          <Button variant="outline" onClick={handlePopout}>
-            <ExternalLink className="w-4 h-4" />
-          </Button>
-          <ModeToggle />
-        </div>
-      </div>
+      <NavBar
+        fontSize={fontSize}
+        setFontSize={setFontSize}
+        scrollSpeed={scrollSpeed}
+        setScrollSpeed={setScrollSpeed}
+        isPlaying={isPlaying}
+        setIsPlaying={setIsPlaying}
+        isFlippedHorizontal={isFlippedHorizontal}
+        setIsFlippedHorizontal={setIsFlippedHorizontal}
+        isFlippedVertical={isFlippedVertical}
+        setIsFlippedVertical={setIsFlippedVertical}
+        textAlign={textAlign}
+        setTextAlign={setTextAlign}
+        recentFiles={recentFiles}
+        onLoadFile={handleLoadFile}
+        onLoadRecent={handleLoadRecent}
+        onReset={handleReset}
+        onPopout={handlePopout}
+      />
 
       <TeleprompterText
         key={resetKey}
@@ -334,6 +228,7 @@ const MainView = () => {
         textContent={textContent}
         isFlippedHorizontal={isFlippedHorizontal}
         isFlippedVertical={isFlippedVertical}
+        textAlign={textAlign}
         onEnd={() => setIsPlaying(false)}
       />
 

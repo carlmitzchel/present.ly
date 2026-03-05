@@ -14,6 +14,7 @@ const PopoutView = () => {
     textContent,
     isFlippedHorizontal,
     isFlippedVertical,
+    textAlign,
   } = useTeleprompterState("popout");
 
   useEffect(() => {
@@ -64,6 +65,7 @@ const PopoutView = () => {
         textContent={textContent}
         isFlippedHorizontal={isFlippedHorizontal}
         isFlippedVertical={isFlippedVertical}
+        textAlign={textAlign}
         onEnd={() => setIsPlaying(false)}
       />
     </div>

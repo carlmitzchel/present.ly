@@ -11,6 +11,7 @@ interface Props {
   textContent: string;
   isFlippedHorizontal: boolean;
   isFlippedVertical: boolean;
+  textAlign: "center" | "justify";
   onEnd: () => void;
 }
 
@@ -21,6 +22,7 @@ const TeleprompterText = ({
   textContent,
   isFlippedHorizontal,
   isFlippedVertical,
+  textAlign,
   onEnd,
 }: Props) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -80,7 +82,7 @@ const TeleprompterText = ({
     >
       <div className="max-w-4xl mx-auto">
         <p
-          className="text-foreground leading-relaxed whitespace-pre-line text-center transition-all duration-200"
+          className={`text-foreground leading-relaxed whitespace-pre-line transition-all duration-200 ${textAlign === "center" ? "text-center" : "text-justify"}`}
           style={{
             fontSize: `${fontSize}px`,
             lineHeight: 1.5,
