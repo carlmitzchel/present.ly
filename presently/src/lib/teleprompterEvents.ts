@@ -6,7 +6,8 @@ export interface TeleprompterState {
   fontSize: number;
   scrollSpeed: number;
   textContent: string;
-  isFlipped: boolean;
+  isFlippedHorizontal: boolean;
+  isFlippedVertical: boolean;
 }
 
 export const emitState = (state: TeleprompterState) => {

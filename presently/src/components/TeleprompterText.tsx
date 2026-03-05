@@ -9,7 +9,8 @@ interface Props {
   fontSize: number;
   scrollSpeed: number;
   textContent: string;
-  isFlipped: boolean;
+  isFlippedHorizontal: boolean;
+  isFlippedVertical: boolean;
   onEnd: () => void;
 }
 
@@ -18,7 +19,8 @@ const TeleprompterText = ({
   fontSize,
   scrollSpeed,
   textContent,
-  isFlipped,
+  isFlippedHorizontal,
+  isFlippedVertical,
   onEnd,
 }: Props) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -83,7 +85,9 @@ const TeleprompterText = ({
             fontSize: `${fontSize}px`,
             lineHeight: 1.5,
             fontWeight: 500,
-            transform: isFlipped ? "scaleX(-1)" : "none",
+            transform:
+              `${isFlippedHorizontal ? "scaleX(-1)" : ""} ${isFlippedVertical ? "scaleY(-1)" : ""}`.trim() ||
+              "none",
           }}
         >
           {textContent}

@@ -12,20 +12,21 @@ export const useTeleprompterState = (role: "main" | "popout") => {
   const [fontSize, setFontSize] = useState([32]);
   const [scrollSpeed, setScrollSpeed] = useState([3]);
   const [textContent, setTextContent] = useState("Initial sample text...");
-  const [isFlipped, setIsFlipped] = useState(false);
+  const [isFlippedHorizontal, setIsFlippedHorizontal] = useState(false);
+  const [isFlippedVertical, setIsFlippedVertical] = useState(false);
   const isMounted = useRef(true);
 
   // Collect latest state in a ref so the request listener always has it
-  const stateRef = useRef({ isPlaying, fontSize: fontSize[0], scrollSpeed: scrollSpeed[0], textContent, isFlipped });
+  const stateRef = useRef({ isPlaying, fontSize: fontSize[0], scrollSpeed: scrollSpeed[0], textContent, isFlippedHorizontal, isFlippedVertical });
   useEffect(() => {
-    stateRef.current = { isPlaying, fontSize: fontSize[0], scrollSpeed: scrollSpeed[0], textContent, isFlipped };
-  }, [isPlaying, fontSize, scrollSpeed, textContent, isFlipped]);
+    stateRef.current = { isPlaying, fontSize: fontSize[0], scrollSpeed: scrollSpeed[0], textContent, isFlippedHorizontal, isFlippedVertical };
+  }, [isPlaying, fontSize, scrollSpeed, textContent, isFlippedHorizontal, isFlippedVertical]);
 
   // Main: emit on state change
   useEffect(() => {
     if (role !== "main") return;
     emitState(stateRef.current);
-  }, [isPlaying, fontSize, scrollSpeed, textContent, isFlipped, role]);
+  }, [isPlaying, fontSize, scrollSpeed, textContent, isFlippedHorizontal, isFlippedVertical, role]);
 
   // Main: respond to popout's request by re-emitting current state
   useEffect(() => {
@@ -48,7 +49,8 @@ export const useTeleprompterState = (role: "main" | "popout") => {
       setFontSize([state.fontSize]);
       setScrollSpeed([state.scrollSpeed]);
       setTextContent(state.textContent);
-      setIsFlipped(state.isFlipped);
+      setIsFlippedHorizontal(state.isFlippedHorizontal);
+      setIsFlippedVertical(state.isFlippedVertical);
     });
 
     requestState();
@@ -68,7 +70,9 @@ export const useTeleprompterState = (role: "main" | "popout") => {
     setScrollSpeed, 
     textContent, 
     setTextContent,
-    isFlipped,
-    setIsFlipped
+    isFlippedHorizontal,
+    setIsFlippedHorizontal,
+    isFlippedVertical,
+    setIsFlippedVertical
   };
 };

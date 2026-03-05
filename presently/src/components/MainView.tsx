@@ -7,6 +7,7 @@ import {
   FlipHorizontal,
   ChevronDown,
   History,
+  FlipVertical,
 } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
@@ -46,8 +47,10 @@ const MainView = () => {
     setScrollSpeed,
     textContent,
     setTextContent,
-    isFlipped,
-    setIsFlipped,
+    isFlippedHorizontal,
+    setIsFlippedHorizontal,
+    isFlippedVertical,
+    setIsFlippedVertical,
   } = useTeleprompterState("main");
 
   const [recentFiles, setRecentFiles] = useState<RecentFile[]>([]);
@@ -70,37 +73,33 @@ const MainView = () => {
 
   useEffect(() => {
     const initialize = async () => {
-      console.log("[MainView] Starting initialization...");
       await loadRecentFiles();
       await loadLastUsedState();
       setIsInitialLoad(false);
-      console.log("[MainView] Initialization complete.");
     };
     initialize();
   }, []);
 
   const loadLastUsedState = async () => {
     try {
-      console.log("[MainView] Loading last used state...");
       const lastText = await getSetting<string>("last_text");
       const lastFontSize = await getSetting<number[]>("last_font_size");
       const lastSpeed = await getSetting<number[]>("last_speed");
-      const lastFlipped = await getSetting<boolean>("last_flipped");
-
-      console.log("[MainView] Loaded values:", {
-        hasText: !!lastText,
-        fontSize: lastFontSize,
-        speed: lastSpeed,
-        flipped: lastFlipped,
-      });
+      const lastFlippedHorizontal = await getSetting<boolean>(
+        "last_flipped_horizontal",
+      );
+      const lastFlippedVertical = await getSetting<boolean>(
+        "last_flipped_vertical",
+      );
 
       if (lastText) setTextContent(lastText);
       if (lastFontSize) setFontSize(lastFontSize);
       if (lastSpeed) setScrollSpeed(lastSpeed);
-      if (lastFlipped !== null) setIsFlipped(lastFlipped);
-    } catch (error) {
-      console.error("[MainView] Failed to load last used state:", error);
-    }
+      if (lastFlippedHorizontal !== null)
+        setIsFlippedHorizontal(lastFlippedHorizontal);
+      if (lastFlippedVertical !== null)
+        setIsFlippedVertical(lastFlippedVertical);
+    } catch (error) {}
   };
 
   // Persist state changes
@@ -121,16 +120,19 @@ const MainView = () => {
 
   useEffect(() => {
     if (isInitialLoad) return;
-    setSetting("last_flipped", JSON.stringify(isFlipped));
-  }, [isFlipped, isInitialLoad]);
+    setSetting("last_flipped_horizontal", JSON.stringify(isFlippedHorizontal));
+  }, [isFlippedHorizontal, isInitialLoad]);
+
+  useEffect(() => {
+    if (isInitialLoad) return;
+    setSetting("last_flipped_vertical", JSON.stringify(isFlippedVertical));
+  }, [isFlippedVertical, isInitialLoad]);
 
   const loadRecentFiles = async () => {
     try {
       const files = await getRecentFiles(5);
       setRecentFiles(files);
-    } catch (error) {
-      console.error("Failed to load recent files:", error);
-    }
+    } catch (error) {}
   };
 
   const handleLoadFile = async () => {
@@ -151,25 +153,19 @@ const MainView = () => {
         await addRecentFile(path, filename);
         await loadRecentFiles();
       }
-    } catch (error) {
-      console.error("Failed to load file:", error);
-    }
+    } catch (error) {}
   };
 
   const handleLoadRecent = async (path: string, filename: string) => {
     try {
       startLoadingAnimation();
-      console.log(`[MainView] Attempting to load recent file: ${path}`);
       const content = await readTextFile(path);
-      console.log("[MainView] File content loaded successfully");
       setTextContent(content);
       setIsPlaying(false);
 
       await addRecentFile(path, filename);
       await loadRecentFiles();
-    } catch (error) {
-      console.error("[MainView] Failed to load recent file:", error);
-    }
+    } catch (error) {}
   };
 
   const handlePopout = async () => {
@@ -269,14 +265,6 @@ const MainView = () => {
             )}
             {isPlaying ? "Pause" : "Play"}
           </Button>
-          <Button
-            variant={isFlipped ? "default" : "outline"}
-            onClick={() => setIsFlipped(!isFlipped)}
-            className="w-20"
-          >
-            <FlipHorizontal className="w-4 h-4" />
-            Flip
-          </Button>
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -315,6 +303,19 @@ const MainView = () => {
             </DropdownMenuContent>
           </DropdownMenu>
 
+          <Button
+            variant={isFlippedHorizontal ? "default" : "outline"}
+            onClick={() => setIsFlippedHorizontal(!isFlippedHorizontal)}
+          >
+            <FlipHorizontal className="w-4 h-4" />
+          </Button>
+          <Button
+            variant={isFlippedVertical ? "default" : "outline"}
+            onClick={() => setIsFlippedVertical(!isFlippedVertical)}
+          >
+            <FlipVertical className="w-4 h-4" />
+          </Button>
+
           <Button variant="outline" onClick={handleReset}>
             <RotateCcw className="w-4 h-4" />
           </Button>
@@ -331,7 +332,8 @@ const MainView = () => {
         fontSize={fontSize[0]}
         scrollSpeed={scrollSpeed[0]}
         textContent={textContent}
-        isFlipped={isFlipped}
+        isFlippedHorizontal={isFlippedHorizontal}
+        isFlippedVertical={isFlippedVertical}
         onEnd={() => setIsPlaying(false)}
       />
 
