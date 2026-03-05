@@ -1,6 +1,7 @@
 import { Monitor, Type, Volume2 } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
+import { ModeToggle } from "@/components/ModeToggle";
 
 const SettingsView = () => {
   return (
@@ -18,6 +19,15 @@ const SettingsView = () => {
             <h3 className="text-sm font-semibold text-foreground">Display</h3>
           </div>
           <div className="space-y-5">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-foreground">Dark mode</p>
+                <p className="text-xs text-muted-foreground">
+                  Enable dark mode for a more comfortable reading experience
+                </p>
+              </div>
+              <ModeToggle />
+            </div>
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-foreground">Mirror text</p>

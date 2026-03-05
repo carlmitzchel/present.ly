@@ -20,7 +20,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ModeToggle } from "@/components/ModeToggle";
 import { RecentFile } from "@/lib/db";
 
 interface NavBarProps {
@@ -115,35 +114,6 @@ const NavBar = ({
           )}
           {isPlaying ? "Pause" : "Play"}
         </Button>
-        <Button
-          variant={isFlippedHorizontal ? "default" : "outline"}
-          onClick={() => setIsFlippedHorizontal(!isFlippedHorizontal)}
-        >
-          <FlipHorizontal className="w-4 h-4" />
-        </Button>
-        <Button
-          variant={isFlippedVertical ? "default" : "outline"}
-          onClick={() => setIsFlippedVertical(!isFlippedVertical)}
-        >
-          <FlipVertical className="w-4 h-4" />
-        </Button>
-        <Button
-          variant={textAlign === "justify" ? "default" : "outline"}
-          onClick={() =>
-            setTextAlign(textAlign === "center" ? "justify" : "center")
-          }
-          title={
-            textAlign === "center"
-              ? "Switch to Justified text"
-              : "Switch to Centered text"
-          }
-        >
-          {textAlign === "center" ? (
-            <AlignJustify className="w-4 h-4" />
-          ) : (
-            <AlignCenter className="w-4 h-4" />
-          )}
-        </Button>
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -180,13 +150,42 @@ const NavBar = ({
           </DropdownMenuContent>
         </DropdownMenu>
 
+        <Button
+          variant={isFlippedHorizontal ? "default" : "outline"}
+          onClick={() => setIsFlippedHorizontal(!isFlippedHorizontal)}
+        >
+          <FlipHorizontal className="w-4 h-4" />
+        </Button>
+        <Button
+          variant={isFlippedVertical ? "default" : "outline"}
+          onClick={() => setIsFlippedVertical(!isFlippedVertical)}
+        >
+          <FlipVertical className="w-4 h-4" />
+        </Button>
+        <Button
+          variant={textAlign === "justify" ? "default" : "outline"}
+          onClick={() =>
+            setTextAlign(textAlign === "center" ? "justify" : "center")
+          }
+          title={
+            textAlign === "center"
+              ? "Switch to Justified text"
+              : "Switch to Centered text"
+          }
+        >
+          {textAlign === "center" ? (
+            <AlignJustify className="w-4 h-4" />
+          ) : (
+            <AlignCenter className="w-4 h-4" />
+          )}
+        </Button>
+
         <Button variant="outline" onClick={onReset}>
           <RotateCcw className="w-4 h-4" />
         </Button>
         <Button variant="outline" onClick={onPopout}>
           <ExternalLink className="w-4 h-4" />
         </Button>
-        <ModeToggle />
       </div>
     </div>
   );
