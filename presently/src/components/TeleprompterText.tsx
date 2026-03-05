@@ -1,3 +1,4 @@
+import { ArrowBigRightDash } from "lucide-react";
 import { useEffect, useRef } from "react";
 
 const LINE_HEIGHT = 1;
@@ -80,7 +81,17 @@ const TeleprompterText = ({
       ref={scrollContainerRef}
       className="flex-1 overflow-y-auto min-h-0 py-[40vh] px-6 custom-scrollbar"
     >
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-4xl mx-auto relative">
+        {/* <ArrowBigRightDash
+          className={`absolute -left-12 text-primary transition-all duration-800 ${isPlaying ? "opacity-0" : "opacity-100"}`}
+          style={{
+            width: `${fontSize}px`,
+            height: `${fontSize}px`,
+            top: `${(fontSize * 1.5 - fontSize) / 2}px`,
+            left: `-${fontSize * 1.2}px`,
+            transform: isFlippedHorizontal ? "scaleX(-1)" : "none",
+          }}
+        /> */}
         <p
           className={`text-foreground leading-relaxed whitespace-pre-line transition-all duration-200 ${textAlign === "center" ? "text-center" : "text-justify"}`}
           style={{
