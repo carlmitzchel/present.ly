@@ -15,7 +15,7 @@ import {
   setSetting,
   getSetting,
 } from "@/lib/db";
-import BrandLogo from "@/components/BrandLogo";
+import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 
 const MainView = () => {
   const {
@@ -236,21 +236,36 @@ const MainView = () => {
       <div className="px-6 py-5 bg-status-bar border-t border-border">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-6">
-            <span className="text-[11px] text-muted-foreground">
+            {/* <span className="text-[11px] text-muted-foreground">
               <span className="text-foreground font-medium">142 </span>WPM
-            </span>
-            <span className="text-[11px] text-muted-foreground">
-              <span className="text-foreground font-medium">
-                {elapsedFormatted}{" "}
-              </span>
+            </span> */}
+            <span className="text-[11px]">
+              <span className=" font-medium">{elapsedFormatted} </span>
               elapsed
             </span>
-            <span className="text-[11px] text-muted-foreground">
-              <span className="text-foreground font-medium">
-                {estimateFormatted}{" "}
-              </span>
-              estimate
-            </span>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span className="text-[11px] cursor-default">
+                  <span className="font-medium">{estimateFormatted} </span>
+                  estimate
+                </span>
+              </TooltipTrigger>
+              <TooltipContent
+                className="bg-background text-foreground border-border text-xs max-w-[260px]"
+                side="right"
+              >
+                Averaged oral reading rate (183 wpm) — Brysbaert,{" "}
+                <a
+                  href="https://doi.org/10.1016/j.jml.2019.104047"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="underline underline-offset-2"
+                >
+                  JML 2019
+                </a>
+                .
+              </TooltipContent>
+            </Tooltip>
           </div>
           {/* <span className="text-[11px] text-muted-foreground uppercase tracking-wider">
             Mode: <span className="text-foreground">Automatic Scroll</span>

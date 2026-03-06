@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-export const useSpeechEstimation = (text: string, wpm: number = 142) => {
+export const useSpeechEstimation = (text: string, wpm: number = 183) => {
   return useMemo(() => {
     if (!text || text.trim() === '') {
       return { estimateFormatted: "00:00", estimateSeconds: 0, wordCount: 0 };
