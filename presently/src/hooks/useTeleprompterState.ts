@@ -6,6 +6,7 @@ import {
   TeleprompterState,
 } from "@/lib/teleprompterEvents";
 import { useEffect, useRef, useState } from "react";
+import { listen } from "@tauri-apps/api/event";
 
 export const useTeleprompterState = (role: "main" | "popout") => {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -36,6 +37,49 @@ export const useTeleprompterState = (role: "main" | "popout") => {
       emitState(stateRef.current);
     });
     return () => { unlisten.then((fn) => fn()); };
+  }, [role]);
+
+  // Main: Listen to Remote App Commands via Tauri Events
+  useEffect(() => {
+    if (role !== "main") return;
+    
+    const unlistenPlayPause = listen("remote-play_pause", () => {
+      setIsPlaying((prev) => !prev);
+    });
+    const unlistenSpeedUp = listen("remote-speed_up", () => {
+      setScrollSpeed((prev) => [Math.min(prev[0] + 1, 20)]);
+    });
+    const unlistenSpeedDown = listen("remote-speed_down", () => {
+      setScrollSpeed((prev) => [Math.max(prev[0] - 1, 1)]);
+    });
+    const unlistenFontUp = listen("remote-font_up", () => {
+      setFontSize((prev) => [Math.min(prev[0] + 4, 120)]);
+    });
+    const unlistenFontDown = listen("remote-font_down", () => {
+      setFontSize((prev) => [Math.max(prev[0] - 4, 16)]);
+    });
+    const unlistenScrollUp = listen("remote-scroll_up", () => {
+      const container = document.getElementById("teleprompter-scroll-container");
+      if (container) {
+        container.scrollBy({ top: -100, behavior: "smooth" });
+      }
+    });
+    const unlistenScrollDown = listen("remote-scroll_down", () => {
+      const container = document.getElementById("teleprompter-scroll-container");
+      if (container) {
+        container.scrollBy({ top: 100, behavior: "smooth" });
+      }
+    });
+
+    return () => {
+      unlistenPlayPause.then((f) => f());
+      unlistenSpeedUp.then((f) => f());
+      unlistenSpeedDown.then((f) => f());
+      unlistenFontUp.then((f) => f());
+      unlistenFontDown.then((f) => f());
+      unlistenScrollUp.then((f) => f());
+      unlistenScrollDown.then((f) => f());
+    };
   }, [role]);
 
   // Popout: listen for state updates

@@ -25,4 +25,9 @@ serde_json = "1"
 tauri-plugin-sql = { version = "2.3.2", features = ["sqlite"] }
 tauri-plugin-dialog = "2"
 tauri-plugin-fs = "2"
+axum = { version = "0.7", features = ["ws"] }
+tokio = { version = "1", features = ["full"] }
+local-ip-address = "0.6"
+tower-http = { version = "0.5", features = ["cors", "fs"] }
+futures-util = "0.3"
 

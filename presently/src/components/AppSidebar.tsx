@@ -7,6 +7,7 @@ import {
   Settings,
   PanelLeftClose,
   PanelLeft,
+  Smartphone,
   type LucideIcon,
 } from "lucide-react";
 import {
@@ -15,6 +16,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import BrandLogo from "./BrandLogo";
+import { RemoteQR } from "./RemoteQR";
 
 export type NavItem = {
   id: string;
@@ -126,6 +128,37 @@ const AppSidebar = ({
 
           return button;
         })}
+
+        <div className="pt-2 mt-2 border-t border-sidebar-border mix-blend-normal">
+          <RemoteQR collapsed={collapsed}>
+            {collapsed ? (
+              <Tooltip delayDuration={200}>
+                <TooltipTrigger asChild>
+                  <button
+                    className="w-full flex items-center justify-center gap-3 px-3 py-2 rounded-md text-sm transition-all duration-150
+              text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                  >
+                    <Smartphone className="w-4 h-4 shrink-0" />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent
+                  side="right"
+                  className="bg-surface-overlay text-foreground border-border text-xs"
+                >
+                  Remote Control
+                </TooltipContent>
+              </Tooltip>
+            ) : (
+              <button
+                className={`w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-all duration-150
+          text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground`}
+              >
+                <Smartphone className="w-4 h-4 shrink-0" />
+                <span>Remote Control</span>
+              </button>
+            )}
+          </RemoteQR>
+        </div>
       </nav>
 
       <div

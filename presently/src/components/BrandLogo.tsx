@@ -20,13 +20,13 @@ const BrandLogo: React.FC<BrandLogoProps> = ({
         style={{ width: size, height: size }}
       >
         <img
-          src="/src/assets/logo.png"
+          src="src/assets/icon.png"
           alt="presently. logo"
           className="w-full h-full object-contain"
         />
       </div>
       {showText && !collapsed && (
-        <span className="text-xl font-bold tracking-tight text-primary">
+        <span className="text-lg font-semibold tracking-tight text-primary">
           presently<span className="text-orange-500">.</span>
         </span>
       )}

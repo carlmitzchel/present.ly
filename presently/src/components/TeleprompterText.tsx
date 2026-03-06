@@ -78,6 +78,7 @@ const TeleprompterText = ({
 
   return (
     <div
+      id="teleprompter-scroll-container"
       ref={scrollContainerRef}
       className="flex-1 overflow-y-auto min-h-0 py-[40vh] px-6 custom-scrollbar"
     >
