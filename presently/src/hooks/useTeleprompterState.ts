@@ -16,19 +16,20 @@ export const useTeleprompterState = (role: "main" | "popout") => {
   const [isFlippedHorizontal, setIsFlippedHorizontal] = useState(false);
   const [isFlippedVertical, setIsFlippedVertical] = useState(false);
   const [textAlign, setTextAlign] = useState<"center" | "justify">("center");
+  const [isFocusMode, setIsFocusMode] = useState(false);
   const isMounted = useRef(true);
 
   // Collect latest state in a ref so the request listener always has it
-  const stateRef = useRef({ isPlaying, fontSize: fontSize[0], scrollSpeed: scrollSpeed[0], textContent, isFlippedHorizontal, isFlippedVertical, textAlign });
+  const stateRef = useRef({ isPlaying, fontSize: fontSize[0], scrollSpeed: scrollSpeed[0], textContent, isFlippedHorizontal, isFlippedVertical, textAlign, isFocusMode });
   useEffect(() => {
-    stateRef.current = { isPlaying, fontSize: fontSize[0], scrollSpeed: scrollSpeed[0], textContent, isFlippedHorizontal, isFlippedVertical, textAlign };
-  }, [isPlaying, fontSize, scrollSpeed, textContent, isFlippedHorizontal, isFlippedVertical, textAlign]);
+    stateRef.current = { isPlaying, fontSize: fontSize[0], scrollSpeed: scrollSpeed[0], textContent, isFlippedHorizontal, isFlippedVertical, textAlign, isFocusMode };
+  }, [isPlaying, fontSize, scrollSpeed, textContent, isFlippedHorizontal, isFlippedVertical, textAlign, isFocusMode]);
 
   // Main: emit on state change
   useEffect(() => {
     if (role !== "main") return;
     emitState(stateRef.current);
-  }, [isPlaying, fontSize, scrollSpeed, textContent, isFlippedHorizontal, isFlippedVertical, textAlign, role]);
+  }, [isPlaying, fontSize, scrollSpeed, textContent, isFlippedHorizontal, isFlippedVertical, textAlign, isFocusMode, role]);
 
   // Main: respond to popout's request by re-emitting current state
   useEffect(() => {
@@ -97,6 +98,7 @@ export const useTeleprompterState = (role: "main" | "popout") => {
       setIsFlippedHorizontal(state.isFlippedHorizontal);
       setIsFlippedVertical(state.isFlippedVertical);
       setTextAlign(state.textAlign || "center");
+      setIsFocusMode(state.isFocusMode || false);
     });
 
     requestState();
@@ -121,6 +123,8 @@ export const useTeleprompterState = (role: "main" | "popout") => {
     isFlippedVertical,
     setIsFlippedVertical,
     textAlign,
-    setTextAlign
+    setTextAlign,
+    isFocusMode,
+    setIsFocusMode
   };
-};
+};

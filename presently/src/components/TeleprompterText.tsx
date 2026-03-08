@@ -1,4 +1,4 @@
-import { ArrowBigRightDash } from "lucide-react";
+// import { ArrowBigRightDash } from "lucide-react";
 import { useEffect, useRef } from "react";
 
 const LINE_HEIGHT = 1;
@@ -13,6 +13,7 @@ interface Props {
   isFlippedHorizontal: boolean;
   isFlippedVertical: boolean;
   textAlign: "center" | "justify";
+  isFocusMode: boolean;
   onEnd: () => void;
 }
 
@@ -24,6 +25,7 @@ const TeleprompterText = ({
   isFlippedHorizontal,
   isFlippedVertical,
   textAlign,
+  isFocusMode,
   onEnd,
 }: Props) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -77,36 +79,42 @@ const TeleprompterText = ({
   }, [isPlaying]);
 
   return (
-    <div
-      id="teleprompter-scroll-container"
-      ref={scrollContainerRef}
-      className="flex-1 overflow-y-auto min-h-0 py-[40vh] px-6 custom-scrollbar"
-    >
-      <div className="max-w-4xl mx-auto relative">
-        {/* <ArrowBigRightDash
-          className={`absolute -left-12 text-primary transition-all duration-800 ${isPlaying ? "opacity-0" : "opacity-100"}`}
-          style={{
-            width: `${fontSize}px`,
-            height: `${fontSize}px`,
-            top: `${(fontSize * 1.5 - fontSize) / 2}px`,
-            left: `-${fontSize * 1.2}px`,
-            transform: isFlippedHorizontal ? "scaleX(-1)" : "none",
-          }}
-        /> */}
-        <p
-          className={`text-foreground leading-relaxed whitespace-pre-line transition-all duration-200 ${textAlign === "center" ? "text-center" : "text-justify"}`}
-          style={{
-            fontSize: `${fontSize}px`,
-            lineHeight: 1.5,
-            fontWeight: 500,
-            transform:
-              `${isFlippedHorizontal ? "scaleX(-1)" : ""} ${isFlippedVertical ? "scaleY(-1)" : ""}`.trim() ||
-              "none",
-          }}
-        >
-          {textContent}
-        </p>
+    <div className="flex-1 min-h-0 relative overflow-hidden">
+      <div
+        id="teleprompter-scroll-container"
+        ref={scrollContainerRef}
+        className="h-full overflow-y-auto py-[40vh] px-6 custom-scrollbar"
+      >
+        <div className="max-w-4xl mx-auto relative">
+          <p
+            className={`text-foreground leading-relaxed whitespace-pre-line transition-all duration-200 ${textAlign === "center" ? "text-center" : "text-justify"}`}
+            style={{
+              fontSize: `${fontSize}px`,
+              lineHeight: 1.5,
+              fontWeight: 500,
+              transform:
+                `${isFlippedHorizontal ? "scaleX(-1)" : ""} ${isFlippedVertical ? "scaleY(-1)" : ""}`.trim() ||
+                "none",
+            }}
+          >
+            {textContent}
+          </p>
+        </div>
       </div>
+
+      {isFocusMode && (
+        <div
+          className="absolute inset-x-0 bottom-0 h-[50vh] pointer-events-none z-20"
+          style={{
+            background:
+              "linear-gradient(to bottom, transparent, hsl(var(--background) / 0.8) 50%, hsl(var(--background)) 90%)",
+            backdropFilter: "blur(8px)",
+            maskImage: "linear-gradient(to bottom, transparent, black 60%)",
+            WebkitMaskImage:
+              "linear-gradient(to bottom, transparent, black 60%)",
+          }}
+        />
+      )}
     </div>
   );
 };

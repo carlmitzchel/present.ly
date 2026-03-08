@@ -10,6 +10,8 @@ import {
   FlipVertical,
   AlignCenter,
   AlignJustify,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
@@ -40,6 +42,8 @@ interface NavBarProps {
   onLoadRecent: (path: string, filename: string) => void;
   onReset: () => void;
   onPopout: () => void;
+  isFocusMode: boolean;
+  setIsFocusMode: (v: boolean) => void;
 }
 
 const NavBar = ({
@@ -60,6 +64,8 @@ const NavBar = ({
   onLoadRecent,
   onReset,
   onPopout,
+  isFocusMode,
+  setIsFocusMode,
 }: NavBarProps) => {
   return (
     <div className="flex flex-wrap items-center gap-4 sm:gap-6 px-4 sm:px-6 py-4 border-b border-border justify-between shrink-0">
@@ -177,6 +183,17 @@ const NavBar = ({
             <AlignJustify className="w-4 h-4" />
           ) : (
             <AlignCenter className="w-4 h-4" />
+          )}
+        </Button>
+        <Button
+          variant={isFocusMode ? "default" : "outline"}
+          onClick={() => setIsFocusMode(!isFocusMode)}
+          title={isFocusMode ? "Disable Focus Mode" : "Enable Focus Mode"}
+        >
+          {isFocusMode ? (
+            <Eye className="size-4" />
+          ) : (
+            <EyeOff className="size-4" />
           )}
         </Button>
 

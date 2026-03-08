@@ -33,6 +33,8 @@ const MainView = () => {
     setIsFlippedVertical,
     textAlign,
     setTextAlign,
+    isFocusMode,
+    setIsFocusMode,
   } = useTeleprompterState("main");
 
   const [recentFiles, setRecentFiles] = useState<RecentFile[]>([]);
@@ -73,6 +75,7 @@ const MainView = () => {
       const lastFlippedVertical = await getSetting<boolean>(
         "last_flipped_vertical",
       );
+      const lastFocusMode = await getSetting<boolean>("last_focus_mode");
 
       if (lastText) setTextContent(lastText);
       if (lastFontSize) setFontSize(lastFontSize);
@@ -81,6 +84,7 @@ const MainView = () => {
         setIsFlippedHorizontal(lastFlippedHorizontal);
       if (lastFlippedVertical !== null)
         setIsFlippedVertical(lastFlippedVertical);
+      if (lastFocusMode !== null) setIsFocusMode(lastFocusMode);
     } catch (error) {}
   };
 
@@ -114,6 +118,11 @@ const MainView = () => {
     if (isInitialLoad) return;
     setSetting("last_text_align", textAlign);
   }, [textAlign, isInitialLoad]);
+
+  useEffect(() => {
+    if (isInitialLoad) return;
+    setSetting("last_focus_mode", JSON.stringify(isFocusMode));
+  }, [isFocusMode, isInitialLoad]);
 
   const loadRecentFiles = async () => {
     try {
@@ -213,6 +222,8 @@ const MainView = () => {
         setIsFlippedVertical={setIsFlippedVertical}
         textAlign={textAlign}
         setTextAlign={setTextAlign}
+        isFocusMode={isFocusMode}
+        setIsFocusMode={setIsFocusMode}
         recentFiles={recentFiles}
         onLoadFile={handleLoadFile}
         onLoadRecent={handleLoadRecent}
@@ -229,6 +240,7 @@ const MainView = () => {
         isFlippedHorizontal={isFlippedHorizontal}
         isFlippedVertical={isFlippedVertical}
         textAlign={textAlign}
+        isFocusMode={isFocusMode}
         onEnd={() => setIsPlaying(false)}
       />
 
