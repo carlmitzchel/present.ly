@@ -142,7 +142,7 @@ const NavBar = ({
                     onSelect={() => onLoadRecent(file.path, file.filename)}
                     className="text-xs truncate max-w-[180px]"
                   >
-                    {file.filename}
+                    {file.filename.split(/[\\/]/).pop()}
                   </DropdownMenuItem>
                 ))}
               </>
