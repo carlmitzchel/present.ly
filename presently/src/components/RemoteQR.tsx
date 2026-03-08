@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import QRCode from "react-qr-code";
 import { invoke } from "@tauri-apps/api/core";
-import { Smartphone, QrCode } from "lucide-react";
+import { Smartphone, QrCode, Monitor, Wifi, Network } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -16,20 +16,44 @@ interface RemoteQRProps {
   collapsed?: boolean;
 }
 
+interface RemoteInterface {
+  name: String;
+  url: string;
+}
+
 export function RemoteQR({ children, collapsed }: RemoteQRProps) {
-  const [remoteUrl, setRemoteUrl] = useState<string | null>(null);
+  const [interfaces, setInterfaces] = useState<RemoteInterface[]>([]);
+  const [selectedIndex, setSelectedIndex] = useState<number>(0);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    async function fetchUrl() {
+    async function fetchUrls() {
+      setIsLoading(true);
       try {
-        const url = await invoke<string>("get_remote_url");
-        setRemoteUrl(url);
+        const result = await invoke<RemoteInterface[]>("get_available_remotes");
+        setInterfaces(result);
+        if (result.length > 0) {
+          setSelectedIndex(0);
+        }
       } catch (e) {
-        console.error("Failed to get remote URL", e);
+        console.error("Failed to get remote URLs", e);
+      } finally {
+        setIsLoading(false);
       }
     }
-    fetchUrl();
+    fetchUrls();
   }, []);
+
+  const currentRemote = interfaces[selectedIndex];
+
+  const getInterfaceIcon = (name: string) => {
+    const lowerName = name.toLowerCase();
+    if (lowerName.includes("wi-fi") || lowerName.includes("wlan"))
+      return <Wifi className="w-4 h-4" />;
+    if (lowerName.includes("ethernet") || lowerName.includes("lan"))
+      return <Network className="w-4 h-4" />;
+    return <Monitor className="w-4 h-4" />;
+  };
 
   return (
     <Dialog>
@@ -55,23 +79,52 @@ export function RemoteQR({ children, collapsed }: RemoteQRProps) {
           </DialogDescription>
         </DialogHeader>
         <div className="flex flex-col items-center justify-center space-y-6 py-6 w-full">
-          {remoteUrl ? (
-            <div className="bg-white p-4 rounded-xl shadow-sm border">
-              <QRCode
-                value={remoteUrl}
-                size={220}
-                bgColor="#ffffff"
-                fgColor="#000000"
-              />
+          {interfaces.length > 1 && (
+            <div className="flex flex-wrap gap-2 justify-center px-4">
+              {interfaces.map((iface, index) => (
+                <button
+                  key={index}
+                  onClick={() => setSelectedIndex(index)}
+                  className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium transition-all
+                    ${
+                      selectedIndex === index
+                        ? "bg-primary text-primary-foreground shadow-sm"
+                        : "bg-muted text-muted-foreground hover:bg-secondary"
+                    }`}
+                >
+                  {getInterfaceIcon(iface.name.toString())}
+                  {iface.name}
+                </button>
+              ))}
             </div>
+          )}
+
+          {!isLoading ? (
+            currentRemote ? (
+              <>
+                <div className="bg-white p-4 rounded-xl shadow-sm border">
+                  <QRCode
+                    value={currentRemote.url}
+                    size={220}
+                    bgColor="#ffffff"
+                    fgColor="#000000"
+                  />
+                </div>
+                <div className="bg-muted px-4 py-2 rounded-lg text-sm font-mono text-center flex items-center justify-center w-full break-all max-w-xs mx-auto">
+                  {currentRemote.url}
+                </div>
+              </>
+            ) : (
+              <div className="h-[220px] w-[220px] flex flex-col items-center justify-center border border-dashed rounded-xl text-muted-foreground text-center p-4">
+                <p>No accessible network interfaces found.</p>
+                <p className="text-[10px] mt-2">
+                  Check if you're connected to a network.
+                </p>
+              </div>
+            )
           ) : (
             <div className="h-[220px] w-[220px] flex items-center justify-center border border-dashed rounded-xl text-muted-foreground">
               Loading...
-            </div>
-          )}
-          {remoteUrl && (
-            <div className="bg-muted px-4 py-2 rounded-lg text-sm font-mono text-center flex items-center justify-center w-full break-all">
-              {remoteUrl}
             </div>
           )}
         </div>

@@ -10,6 +10,33 @@ fn greet(name: &str) -> String {
     format!("Hello, {}! You've been greeted from Rust!", name)
 }
 
+#[derive(serde::Serialize)]
+struct RemoteInterface {
+    name: String,
+    url: String,
+}
+
+#[tauri::command]
+fn get_available_remotes(port: State<'_, u16>) -> Result<Vec<RemoteInterface>, String> {
+    let network_interfaces = local_ip_address::list_afinet_netifas().map_err(|e| e.to_string())?;
+    let mut interfaces = Vec::new();
+
+    for (name, ip) in network_interfaces {
+        if ip.is_ipv4() && !ip.is_loopback() {
+            interfaces.push(RemoteInterface {
+                name,
+                url: format!("http://{}:{}", ip, *port),
+            });
+        }
+    }
+
+    if interfaces.is_empty() {
+        return Err("No available network interfaces found".to_string());
+    }
+
+    Ok(interfaces)
+}
+
 #[tauri::command]
 fn get_remote_url(port: State<'_, u16>) -> Result<String, String> {
     match local_ip_address::local_ip() {
@@ -33,7 +60,7 @@ pub fn run() {
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_opener::init())
         .plugin(SqlBuilder::default().build())
-        .invoke_handler(tauri::generate_handler![greet, get_remote_url])
+        .invoke_handler(tauri::generate_handler![greet, get_remote_url, get_available_remotes])
         .on_window_event(|window, event| match event {
             tauri::WindowEvent::CloseRequested { api, .. } => {
                 if window.label() == "popout" {
