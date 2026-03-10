@@ -28,15 +28,7 @@ const SettingsView = () => {
               </div>
               <ModeToggle />
             </div>
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-foreground">Mirror text</p>
-                <p className="text-xs text-muted-foreground">
-                  Flip text horizontally for physical teleprompters
-                </p>
-              </div>
-              <Switch />
-            </div>
+
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-foreground">High contrast mode</p>

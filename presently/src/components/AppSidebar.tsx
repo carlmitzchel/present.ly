@@ -30,7 +30,7 @@ export const navItems: NavItem[] = [
   // { id: "reading-test", label: "Reading Test", icon: BookOpenCheck },
   // { id: "reading-profile", label: "Reading Profile", icon: UserCircle },
   // { id: "analytics", label: "Analytics", icon: BarChart3, disabled: true },
-  { id: "cloud-sync", label: "Cloud Sync", icon: Cloud, disabled: true },
+  // { id: "cloud-sync", label: "Cloud Sync", icon: Cloud, disabled: true },
   { id: "settings", label: "Settings", icon: Settings },
 ];
 
@@ -129,7 +129,7 @@ const AppSidebar = ({
           return button;
         })}
 
-        <div className="pt-2 mt-2 border-t border-sidebar-border mix-blend-normal">
+        <div className=" mix-blend-normal">
           <RemoteQR collapsed={collapsed}>
             {collapsed ? (
               <Tooltip delayDuration={200}>
