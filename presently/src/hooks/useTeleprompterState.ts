@@ -83,11 +83,9 @@ export const useTeleprompterState = (role: "main" | "popout") => {
     };
   }, [role]);
 
-  // Popout: listen for state updates
+  // Popout & Main: listen for state updates to keep in sync
   useEffect(() => {
-    if (role !== "popout") return;
-    
-    isMounted.current = true; // 👈 reset on each effect run
+    isMounted.current = true;
 
     const unlisten = listenState((state: TeleprompterState) => {
       if (!isMounted.current) return;
@@ -101,7 +99,9 @@ export const useTeleprompterState = (role: "main" | "popout") => {
       setIsFocusMode(state.isFocusMode || false);
     });
 
-    requestState();
+    if (role === "popout") {
+      requestState();
+    }
 
     return () => {
       isMounted.current = false;

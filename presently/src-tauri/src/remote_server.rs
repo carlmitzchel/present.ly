@@ -4,7 +4,6 @@ use axum::{
     routing::get,
     Router,
 };
-use futures_util::stream::StreamExt;
 use tauri::{AppHandle, Emitter};
 
 const MOBILE_UI: &str = r#"

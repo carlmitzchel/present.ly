@@ -1,7 +1,7 @@
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 use tauri_plugin_sql::Builder as SqlBuilder;
 
-use tauri::{Manager, State};
+use tauri::{Emitter, Manager, State};
 
 mod remote_server;
 
@@ -66,6 +66,7 @@ pub fn run() {
                 if window.label() == "popout" {
                     window.hide().unwrap();
                     api.prevent_close();
+                    window.emit("popout-visibility", false).unwrap();
                 }
             }
             _ => {}

@@ -7,6 +7,7 @@ import GeminiLoader from "@/components/GeminiLoader";
 import { open } from "@tauri-apps/plugin-dialog";
 import { readTextFile } from "@tauri-apps/plugin-fs";
 import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
+import { listen } from "@tauri-apps/api/event";
 import { useEffect, useState } from "react";
 import {
   addRecentFile,
@@ -38,6 +39,7 @@ const MainView = () => {
   } = useTeleprompterState("main");
 
   const [recentFiles, setRecentFiles] = useState<RecentFile[]>([]);
+  const [isPopoutActive, setIsPopoutActive] = useState(false);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [resetKey, setResetKey] = useState(0);
   const [isLoadingFile, setIsLoadingFile] = useState(false);
@@ -62,6 +64,36 @@ const MainView = () => {
       setIsInitialLoad(false);
     };
     initialize();
+  }, []);
+
+  useEffect(() => {
+    const setupPopoutListener = async () => {
+      const handleVisibility = (visible: boolean) => {
+        setIsPopoutActive(visible);
+      };
+
+      const unlisten = await listen("popout-visibility", (event) => {
+        handleVisibility(event.payload as boolean);
+      });
+
+      // Check initial state
+      const popout = await WebviewWindow.getByLabel("popout");
+      if (popout) {
+        const visible = await popout.isVisible();
+        handleVisibility(visible);
+      }
+
+      return unlisten;
+    };
+
+    let unlistenFn: (() => void) | undefined;
+    setupPopoutListener().then((unlisten) => {
+      unlistenFn = unlisten;
+    });
+
+    return () => {
+      if (unlistenFn) unlistenFn();
+    };
   }, []);
 
   const loadLastUsedState = async () => {
@@ -165,10 +197,12 @@ const MainView = () => {
   };
 
   const handlePopout = async () => {
+    setIsPlaying(false);
     const existing = await WebviewWindow.getByLabel("popout");
     if (existing) {
       await existing.show();
       await existing.setFocus();
+      setIsPopoutActive(true);
       return;
     }
     new WebviewWindow("popout", {
@@ -182,6 +216,7 @@ const MainView = () => {
       resizable: true,
       focus: true,
     });
+    setIsPopoutActive(true);
   };
 
   const handleReset = () => {
@@ -206,9 +241,8 @@ const MainView = () => {
   }, [isPlaying]);
 
   return (
-    <div className="h-screen flex flex-col bg-background animate-fade-in overflow-hidden">
+    <div className="h-screen flex flex-col bg-background animate-fade-in overflow-hidden relative">
       <GeminiLoader isLoading={isLoadingFile} />
-      {/* Controls bar */}
       <NavBar
         fontSize={fontSize}
         setFontSize={setFontSize}
@@ -231,26 +265,49 @@ const MainView = () => {
         onPopout={handlePopout}
       />
 
-      <TeleprompterText
-        key={resetKey}
-        isPlaying={isPlaying}
-        fontSize={fontSize[0]}
-        scrollSpeed={scrollSpeed[0]}
-        textContent={textContent}
-        isFlippedHorizontal={isFlippedHorizontal}
-        isFlippedVertical={isFlippedVertical}
-        textAlign={textAlign}
-        isFocusMode={isFocusMode}
-        onEnd={() => setIsPlaying(false)}
-      />
+      <main className="flex-1 relative min-h-0 flex flex-col">
+        <div
+          className={`flex-1 flex flex-col min-h-0 transition-opacity duration-500 ${
+            isPopoutActive ? "opacity-10" : "opacity-100"
+          }`}
+        >
+          <TeleprompterText
+            key={resetKey}
+            isPlaying={isPlaying && !isPopoutActive}
+            fontSize={fontSize[0]}
+            scrollSpeed={scrollSpeed[0]}
+            textContent={textContent}
+            isFlippedHorizontal={isFlippedHorizontal}
+            isFlippedVertical={isFlippedVertical}
+            textAlign={textAlign}
+            isFocusMode={isFocusMode}
+            onEnd={() => setIsPlaying(false)}
+          />
+        </div>
 
-      {/* Status bar */}
-      <div className="px-6 py-5 bg-status-bar border-t border-border">
+        {isPopoutActive && (
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-50">
+            <div className="text-center animate-in fade-in zoom-in duration-300">
+              <div className="bg-accent/10 backdrop-blur-sm border border-accent/20 px-8 py-6 rounded-3xl shadow-2xl">
+                <h2 className="text-3xl font-bold bg-gradient-to-br from-foreground to-foreground/60 bg-clip-text text-transparent mb-2">
+                  Popout View Active
+                </h2>
+                <p className="text-muted-foreground font-medium">
+                  Navbar controls and shortcuts remain functional
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+      </main>
+
+      <footer
+        className={`px-6 py-5 bg-status-bar border-t border-border transition-opacity duration-500 shrink-0 ${
+          isPopoutActive ? "opacity-20" : "opacity-100"
+        }`}
+      >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-6">
-            {/* <span className="text-[11px] text-muted-foreground">
-              <span className="text-foreground font-medium">142 </span>WPM
-            </span> */}
             <span className="text-[11px]">
               <span className=" font-medium">{elapsedFormatted} </span>
               elapsed
@@ -279,11 +336,8 @@ const MainView = () => {
               </TooltipContent>
             </Tooltip>
           </div>
-          {/* <span className="text-[11px] text-muted-foreground uppercase tracking-wider">
-            Mode: <span className="text-foreground">Automatic Scroll</span>
-          </span> */}
         </div>
-      </div>
+      </footer>
     </div>
   );
 };
