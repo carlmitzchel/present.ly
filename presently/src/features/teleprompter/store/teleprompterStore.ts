@@ -10,6 +10,9 @@ export interface TeleprompterState {
   isFlippedVertical: boolean;
   textAlign: "center" | "justify";
   isFocusMode: boolean;
+  isHighContrast: boolean;
+  lineHeight: number[];
+  soundEffects: boolean;
 }
 
 interface TeleprompterStore extends TeleprompterState {
@@ -21,6 +24,9 @@ interface TeleprompterStore extends TeleprompterState {
   setIsFlippedVertical: (flipped: boolean) => void;
   setTextAlign: (align: "center" | "justify") => void;
   setIsFocusMode: (focus: boolean) => void;
+  setIsHighContrast: (highContrast: boolean) => void;
+  setLineHeight: (height: number[]) => void;
+  setSoundEffects: (enabled: boolean) => void;
   syncState: (state: RemoteTeleprompterState) => void;
 }
 
@@ -33,6 +39,9 @@ const initialState: TeleprompterState = {
   isFlippedVertical: false,
   textAlign: "center",
   isFocusMode: false,
+  isHighContrast: false,
+  lineHeight: [1.5],
+  soundEffects: true,
 };
 
 const mapToRemote = (state: TeleprompterState): RemoteTeleprompterState => ({
@@ -44,6 +53,9 @@ const mapToRemote = (state: TeleprompterState): RemoteTeleprompterState => ({
   isFlippedVertical: state.isFlippedVertical,
   textAlign: state.textAlign,
   isFocusMode: state.isFocusMode,
+  isHighContrast: state.isHighContrast,
+  lineHeight: state.lineHeight[0],
+  soundEffects: state.soundEffects,
 });
 
 export const useTeleprompterStore = create<TeleprompterStore>((set, get) => ({
@@ -81,11 +93,24 @@ export const useTeleprompterStore = create<TeleprompterStore>((set, get) => ({
     set({ isFocusMode: focus });
     emitState(mapToRemote(get()));
   },
+  setIsHighContrast: (highContrast) => {
+    set({ isHighContrast: highContrast });
+    emitState(mapToRemote(get()));
+  },
+  setLineHeight: (height) => {
+    set({ lineHeight: height });
+    emitState(mapToRemote(get()));
+  },
+  setSoundEffects: (enabled) => {
+    set({ soundEffects: enabled });
+    emitState(mapToRemote(get()));
+  },
 
   syncState: (state) => set({
     ...state,
     fontSize: [state.fontSize],
     scrollSpeed: [state.scrollSpeed],
+    lineHeight: [state.lineHeight],
   }),
 }));
 

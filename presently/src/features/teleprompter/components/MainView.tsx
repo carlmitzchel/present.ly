@@ -36,6 +36,10 @@ const MainView = () => {
   const setTextAlign = useTeleprompterStore((state) => state.setTextAlign);
   const isFocusMode = useTeleprompterStore((state) => state.isFocusMode);
   const setIsFocusMode = useTeleprompterStore((state) => state.setIsFocusMode);
+  const soundEffects = useTeleprompterStore((state) => state.soundEffects);
+  const setIsHighContrast = useTeleprompterStore((state) => state.setIsHighContrast);
+  const setLineHeight = useTeleprompterStore((state) => state.setLineHeight);
+  const setSoundEffects = useTeleprompterStore((state) => state.setSoundEffects);
 
   useTeleprompterSync("main");
 
@@ -56,6 +60,24 @@ const MainView = () => {
     setTimeout(() => {
       setIsLoadingFile(false);
     }, 3000);
+  };
+
+  // Soft chime using Web Audio API — no asset files needed
+  const playChime = (type: "play" | "stop") => {
+    if (!soundEffects) return;
+    try {
+      const ctx = new AudioContext();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(type === "play" ? 880 : 660, ctx.currentTime);
+      gain.gain.setValueAtTime(0.18, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.35);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.35);
+    } catch {}
   };
 
   useEffect(() => {
@@ -109,15 +131,22 @@ const MainView = () => {
         "last_flipped_vertical",
       );
       const lastFocusMode = await getSetting<boolean>("last_focus_mode");
+      const lastHighContrast = await getSetting<boolean>("setting_high_contrast");
+      const lastLineHeight = await getSetting<number[]>("setting_line_height");
+      const lastSoundEffects = await getSetting<boolean>("setting_sound_effects");
 
       if (lastText) setTextContent(lastText);
       if (lastFontSize) setFontSize(lastFontSize);
       if (lastSpeed) setScrollSpeed(lastSpeed);
-      if (lastFlippedHorizontal !== null)
-        setIsFlippedHorizontal(lastFlippedHorizontal);
-      if (lastFlippedVertical !== null)
-        setIsFlippedVertical(lastFlippedVertical);
+      if (lastFlippedHorizontal !== null) setIsFlippedHorizontal(lastFlippedHorizontal);
+      if (lastFlippedVertical !== null) setIsFlippedVertical(lastFlippedVertical);
       if (lastFocusMode !== null) setIsFocusMode(lastFocusMode);
+      if (lastHighContrast !== null) {
+        setIsHighContrast(lastHighContrast);
+        if (lastHighContrast) document.documentElement.classList.add("high-contrast");
+      }
+      if (lastLineHeight) setLineHeight(lastLineHeight);
+      if (lastSoundEffects !== null) setSoundEffects(lastSoundEffects);
     } catch (error) {}
   };
 
@@ -229,7 +258,9 @@ const MainView = () => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === " ") {
         e.preventDefault();
-        setIsPlaying(!isPlaying);
+        const next = !isPlaying;
+        playChime(next ? "play" : "stop");
+        setIsPlaying(next);
       }
       if (e.key === "r") {
         e.preventDefault();
@@ -239,7 +270,7 @@ const MainView = () => {
 
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [isPlaying]);
+  }, [isPlaying, soundEffects]);
 
   return (
     <div className="h-screen flex flex-col bg-background animate-fade-in overflow-hidden relative">

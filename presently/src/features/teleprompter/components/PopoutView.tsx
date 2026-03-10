@@ -2,8 +2,6 @@ import TeleprompterText from "@/features/teleprompter/components/TeleprompterTex
 import { useTeleprompterStore } from "@/features/teleprompter/store/teleprompterStore";
 import { useTeleprompterSync } from "@/features/teleprompter/hooks/useTeleprompterSync";
 import { useEffect } from "react";
-// import { Button } from "./ui/button";
-// import { Pause, Play, RotateCcw } from "lucide-react";
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 
 const PopoutView = () => {
@@ -16,50 +14,66 @@ const PopoutView = () => {
   const isFlippedVertical = useTeleprompterStore((state) => state.isFlippedVertical);
   const textAlign = useTeleprompterStore((state) => state.textAlign);
   const isFocusMode = useTeleprompterStore((state) => state.isFocusMode);
+  const isHighContrast = useTeleprompterStore((state) => state.isHighContrast);
+  const soundEffects = useTeleprompterStore((state) => state.soundEffects);
 
   useTeleprompterSync("popout");
 
+  // Sync high-contrast class to this window's DOM
+  useEffect(() => {
+    const root = document.documentElement;
+    if (isHighContrast) {
+      root.classList.add("high-contrast");
+    } else {
+      root.classList.remove("high-contrast");
+    }
+  }, [isHighContrast]);
+
+  // Soft chime using Web Audio API
+  const playChime = (type: "play" | "stop") => {
+    if (!soundEffects) return;
+    try {
+      const ctx = new AudioContext();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(type === "play" ? 880 : 660, ctx.currentTime);
+      gain.gain.setValueAtTime(0.18, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.35);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.35);
+    } catch {}
+  };
+
+  // Escape closes the popout
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         getCurrentWebviewWindow().close();
       }
     };
-
     document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown); // 👈 always clean up
+    return () => document.removeEventListener("keydown", handleKeyDown);
   }, []);
 
+  // Space toggles playback + chime
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === " ") {
         e.preventDefault();
-        setIsPlaying(!isPlaying);
+        const next = !isPlaying;
+        playChime(next ? "play" : "stop");
+        setIsPlaying(next);
       }
     };
-
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [isPlaying]);
+  }, [isPlaying, soundEffects]);
 
   return (
     <div className="h-screen flex flex-col bg-background overflow-hidden">
-      {/* <div className="flex items-center justify-end gap-2 w-full  py-2 px-4">
-        <Button
-          variant={isPlaying ? "destructive" : "outline"}
-          onClick={() => (isPlaying ? setIsPlaying(false) : setIsPlaying(true))}
-        >
-          {isPlaying ? (
-            <Pause className="w-4 h-4" />
-          ) : (
-            <Play className="w-4 h-4" />
-          )}
-          {isPlaying ? "Pause" : "Play"}
-        </Button>
-        <Button variant="outline" onClick={() => setIsPlaying(false)}>
-          <RotateCcw className="w-4 h-4" />
-        </Button>
-      </div> */}
       <TeleprompterText
         isPlaying={isPlaying}
         fontSize={fontSize[0]}

@@ -10,6 +10,9 @@ export interface TeleprompterState {
   isFlippedVertical: boolean;
   textAlign: "center" | "justify";
   isFocusMode: boolean;
+  isHighContrast: boolean;
+  lineHeight: number;
+  soundEffects: boolean;
 }
 
 export const emitState = (state: TeleprompterState) => {

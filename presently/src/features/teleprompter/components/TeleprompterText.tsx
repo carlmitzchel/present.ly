@@ -1,5 +1,5 @@
-// import { ArrowBigRightDash } from "lucide-react";
 import { useEffect, useRef } from "react";
+import { useTeleprompterStore } from "@/features/teleprompter/store/teleprompterStore";
 
 const LINE_HEIGHT = 1;
 const LINES_PER_SECOND_AT_1X = 1;
@@ -28,6 +28,7 @@ const TeleprompterText = ({
   isFocusMode,
   onEnd,
 }: Props) => {
+  const lineHeight = useTeleprompterStore((s) => s.lineHeight[0]);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const requestRef = useRef<number>(0);
   const lastTimestampRef = useRef<number | null>(null);
@@ -90,7 +91,7 @@ const TeleprompterText = ({
             className={`text-foreground leading-relaxed whitespace-pre-line transition-all duration-200 ${textAlign === "center" ? "text-center" : "text-justify"}`}
             style={{
               fontSize: `${fontSize}px`,
-              lineHeight: 1.5,
+              lineHeight: lineHeight,
               fontWeight: 500,
               transform:
                 `${isFlippedHorizontal ? "scaleX(-1)" : ""} ${isFlippedVertical ? "scaleY(-1)" : ""}`.trim() ||
