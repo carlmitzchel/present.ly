@@ -42,6 +42,9 @@ export const useTeleprompterSync = (role: "main" | "popout") => {
           isFlippedVertical: storeState.isFlippedVertical,
           textAlign: storeState.textAlign,
           isFocusMode: storeState.isFocusMode,
+          isHighContrast: storeState.isHighContrast,
+          lineHeight: storeState.lineHeight[0],
+          soundEffects: storeState.soundEffects,
         });
     });
     return () => { unlisten.then((fn) => fn()); };
