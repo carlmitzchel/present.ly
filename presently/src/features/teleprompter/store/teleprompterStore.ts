@@ -13,6 +13,11 @@ export interface TeleprompterState {
   isHighContrast: boolean;
   lineHeight: number[];
   soundEffects: boolean;
+  // Recorder settings
+  cameraDeviceId: string;
+  cameraFlipped: boolean;
+  recordingSavePath: string;
+  recorderMimeType: string;
 }
 
 interface TeleprompterStore extends TeleprompterState {
@@ -28,6 +33,11 @@ interface TeleprompterStore extends TeleprompterState {
   setLineHeight: (height: number[]) => void;
   setSoundEffects: (enabled: boolean) => void;
   syncState: (state: RemoteTeleprompterState) => void;
+  // Recorder actions
+  setCameraDeviceId: (id: string) => void;
+  setCameraFlipped: (flipped: boolean) => void;
+  setRecordingSavePath: (path: string) => void;
+  setRecorderMimeType: (mime: string) => void;
 }
 
 const initialState: TeleprompterState = {
@@ -42,6 +52,11 @@ const initialState: TeleprompterState = {
   isHighContrast: false,
   lineHeight: [1.5],
   soundEffects: true,
+  // Recorder defaults
+  cameraDeviceId: "",
+  cameraFlipped: false,
+  recordingSavePath: "",
+  recorderMimeType: "video/webm;codecs=vp9,opus",
 };
 
 const mapToRemote = (state: TeleprompterState): RemoteTeleprompterState => ({
@@ -105,6 +120,12 @@ export const useTeleprompterStore = create<TeleprompterStore>((set, get) => ({
     set({ soundEffects: enabled });
     emitState(mapToRemote(get()));
   },
+
+  // Recorder setters (no remote emit needed)
+  setCameraDeviceId: (id) => set({ cameraDeviceId: id }),
+  setCameraFlipped: (flipped) => set({ cameraFlipped: flipped }),
+  setRecordingSavePath: (path) => set({ recordingSavePath: path }),
+  setRecorderMimeType: (mime) => set({ recorderMimeType: mime }),
 
   syncState: (state) => set({
     ...state,

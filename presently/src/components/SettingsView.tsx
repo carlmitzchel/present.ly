@@ -1,10 +1,12 @@
-import { Monitor, Type, Volume2 } from "lucide-react";
+import { Monitor, Type, Volume2, Camera, FolderOpen, RefreshCw } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
+import { Button } from "@/components/ui/button";
 import { ModeToggle } from "@/components/ModeToggle";
 import { useTeleprompterStore } from "@/features/teleprompter/store/teleprompterStore";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { getSetting, setSetting } from "@/lib/db";
+import { open as openDialog } from "@tauri-apps/plugin-dialog";
 
 const SettingsView = () => {
   const isHighContrast = useTeleprompterStore((s) => s.isHighContrast);
@@ -15,6 +17,26 @@ const SettingsView = () => {
   const setLineHeight = useTeleprompterStore((s) => s.setLineHeight);
   const soundEffects = useTeleprompterStore((s) => s.soundEffects);
   const setSoundEffects = useTeleprompterStore((s) => s.setSoundEffects);
+
+  // Recorder state
+  const cameraDeviceId = useTeleprompterStore((s) => s.cameraDeviceId);
+  const setCameraDeviceId = useTeleprompterStore((s) => s.setCameraDeviceId);
+  const recordingSavePath = useTeleprompterStore((s) => s.recordingSavePath);
+  const setRecordingSavePath = useTeleprompterStore((s) => s.setRecordingSavePath);
+
+  const [cameras, setCameras] = useState<MediaDeviceInfo[]>([]);
+
+  const loadCameras = async () => {
+    try {
+      await navigator.mediaDevices.getUserMedia({ video: true });
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      setCameras(devices.filter((d) => d.kind === "videoinput"));
+    } catch {}
+  };
+
+  useEffect(() => {
+    loadCameras();
+  }, []);
 
   // Load persisted settings
   useEffect(() => {
@@ -153,6 +175,73 @@ const SettingsView = () => {
               checked={soundEffects}
               onCheckedChange={setSoundEffects}
             />
+          </div>
+        </div>
+
+        {/* Recording / Camera */}
+        <div className="rounded-xl bg-card border border-border p-5">
+          <div className="flex items-center justify-between mb-5">
+            <div className="flex items-center gap-3">
+              <Camera className="w-4 h-4 text-primary" />
+              <h3 className="text-sm font-semibold text-foreground">Recording</h3>
+            </div>
+            <button
+              onClick={loadCameras}
+              className="text-muted-foreground hover:text-foreground transition-colors"
+              title="Refresh cameras"
+            >
+              <RefreshCw className="w-4 h-4" />
+            </button>
+          </div>
+          
+          <div className="space-y-6">
+            {/* Camera Selection */}
+            <div>
+              <p className="text-sm text-foreground mb-2">Camera</p>
+              <select
+                value={cameraDeviceId}
+                onChange={(e) => {
+                  setCameraDeviceId(e.target.value);
+                  setSetting("recorder_device_id", JSON.stringify(e.target.value));
+                }}
+                className="w-full text-sm bg-background border border-border rounded-md px-3 py-2 text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+              >
+                <option value="">Default camera</option>
+                {cameras.map((cam) => (
+                  <option key={cam.deviceId} value={cam.deviceId}>
+                    {cam.label || `Camera ${cam.deviceId.slice(0, 8)}`}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Save Directory */}
+            <div>
+              <p className="text-sm text-foreground mb-2">Save recordings to</p>
+              <div className="flex gap-2">
+                <div className="flex-1 text-sm text-muted-foreground bg-background border border-border rounded-md px-3 py-2 truncate flex items-center">
+                  {recordingSavePath || "Desktop (default)"}
+                </div>
+                <Button
+                  variant="outline"
+                  onClick={async () => {
+                    try {
+                      const selected = await openDialog({ directory: true, multiple: false });
+                      if (selected && typeof selected === "string") {
+                        setRecordingSavePath(selected);
+                        setSetting("recorder_save_path", JSON.stringify(selected));
+                      }
+                    } catch {}
+                  }}
+                  title="Choose folder"
+                  className="shrink-0 gap-2"
+                >
+                  <FolderOpen className="w-4 h-4" />
+                  Browse
+                </Button>
+              </div>
+            </div>
+            
           </div>
         </div>
       </div>

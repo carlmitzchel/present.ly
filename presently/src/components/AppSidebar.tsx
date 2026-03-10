@@ -8,6 +8,7 @@ import {
   PanelLeftClose,
   PanelLeft,
   Smartphone,
+  Video,
   type LucideIcon,
 } from "lucide-react";
 import {
@@ -27,6 +28,7 @@ export type NavItem = {
 
 export const navItems: NavItem[] = [
   { id: "teleprompter", label: "Teleprompter", icon: MonitorPlay },
+  { id: "recorder", label: "Recorder", icon: Video },
   // { id: "reading-test", label: "Reading Test", icon: BookOpenCheck },
   // { id: "reading-profile", label: "Reading Profile", icon: UserCircle },
   // { id: "analytics", label: "Analytics", icon: BarChart3, disabled: true },

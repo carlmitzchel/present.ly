@@ -44,6 +44,7 @@ interface NavBarProps {
   onPopout: () => void;
   isFocusMode: boolean;
   setIsFocusMode: (v: boolean) => void;
+  hidePopout?: boolean;
 }
 
 const NavBar = ({
@@ -66,6 +67,7 @@ const NavBar = ({
   onPopout,
   isFocusMode,
   setIsFocusMode,
+  hidePopout,
 }: NavBarProps) => {
   return (
     <div className="flex flex-wrap items-center gap-4 sm:gap-6 px-4 sm:px-6 py-4 border-b border-border justify-between shrink-0">
@@ -200,9 +202,11 @@ const NavBar = ({
         <Button variant="outline" onClick={onReset}>
           <RotateCcw className="w-4 h-4" />
         </Button>
-        <Button variant="outline" onClick={onPopout}>
-          <ExternalLink className="w-4 h-4" />
-        </Button>
+        {!hidePopout && (
+          <Button variant="outline" onClick={onPopout}>
+            <ExternalLink className="w-4 h-4" />
+          </Button>
+        )}
       </div>
     </div>
   );

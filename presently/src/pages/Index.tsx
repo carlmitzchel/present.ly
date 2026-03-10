@@ -1,6 +1,7 @@
 import { useState } from "react";
 import AppSidebar from "@/components/AppSidebar";
 import TeleprompterView from "@/features/teleprompter/components/MainView";
+import RecorderView from "@/features/recorder/components/RecorderView";
 import ReadingTestView from "@/components/ReadingTestView";
 import ReadingProfileView from "@/components/ReadingProfileView";
 import SettingsView from "@/components/SettingsView";
@@ -19,6 +20,8 @@ const Index = () => {
     switch (activeView) {
       case "teleprompter":
         return <TeleprompterView />;
+      case "recorder":
+        return <RecorderView />;
       case "reading-test":
         return <ReadingTestView />;
       case "reading-profile":
