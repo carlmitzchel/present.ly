@@ -1,6 +1,7 @@
-import NavBar from "@/components/NavBar";
-import TeleprompterText from "@/components/TeleprompterText";
-import { useTeleprompterState } from "@/hooks/useTeleprompterState";
+import NavBar from "@/features/ui/components/NavBar";
+import TeleprompterText from "@/features/teleprompter/components/TeleprompterText";
+import { useTeleprompterStore } from "@/features/teleprompter/store/teleprompterStore";
+import { useTeleprompterSync } from "@/features/teleprompter/hooks/useTeleprompterSync";
 import { useSpeechEstimation } from "@/hooks/useSpeechEstimation";
 import { useSpeechElapsed } from "@/hooks/useSpeechElapsed";
 import GeminiLoader from "@/components/GeminiLoader";
@@ -16,27 +17,27 @@ import {
   setSetting,
   getSetting,
 } from "@/lib/db";
-import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 const MainView = () => {
-  const {
-    isPlaying,
-    setIsPlaying,
-    fontSize,
-    setFontSize,
-    scrollSpeed,
-    setScrollSpeed,
-    textContent,
-    setTextContent,
-    isFlippedHorizontal,
-    setIsFlippedHorizontal,
-    isFlippedVertical,
-    setIsFlippedVertical,
-    textAlign,
-    setTextAlign,
-    isFocusMode,
-    setIsFocusMode,
-  } = useTeleprompterState("main");
+  const isPlaying = useTeleprompterStore((state) => state.isPlaying);
+  const setIsPlaying = useTeleprompterStore((state) => state.setIsPlaying);
+  const fontSize = useTeleprompterStore((state) => state.fontSize);
+  const setFontSize = useTeleprompterStore((state) => state.setFontSize);
+  const scrollSpeed = useTeleprompterStore((state) => state.scrollSpeed);
+  const setScrollSpeed = useTeleprompterStore((state) => state.setScrollSpeed);
+  const textContent = useTeleprompterStore((state) => state.textContent);
+  const setTextContent = useTeleprompterStore((state) => state.setTextContent);
+  const isFlippedHorizontal = useTeleprompterStore((state) => state.isFlippedHorizontal);
+  const setIsFlippedHorizontal = useTeleprompterStore((state) => state.setIsFlippedHorizontal);
+  const isFlippedVertical = useTeleprompterStore((state) => state.isFlippedVertical);
+  const setIsFlippedVertical = useTeleprompterStore((state) => state.setIsFlippedVertical);
+  const textAlign = useTeleprompterStore((state) => state.textAlign);
+  const setTextAlign = useTeleprompterStore((state) => state.setTextAlign);
+  const isFocusMode = useTeleprompterStore((state) => state.isFocusMode);
+  const setIsFocusMode = useTeleprompterStore((state) => state.setIsFocusMode);
+
+  useTeleprompterSync("main");
 
   const [recentFiles, setRecentFiles] = useState<RecentFile[]>([]);
   const [isPopoutActive, setIsPopoutActive] = useState(false);

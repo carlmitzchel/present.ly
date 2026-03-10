@@ -1,6 +1,6 @@
 import { useState } from "react";
 import AppSidebar from "@/components/AppSidebar";
-import TeleprompterView from "@/components/MainView";
+import TeleprompterView from "@/features/teleprompter/components/MainView";
 import ReadingTestView from "@/components/ReadingTestView";
 import ReadingProfileView from "@/components/ReadingProfileView";
 import SettingsView from "@/components/SettingsView";

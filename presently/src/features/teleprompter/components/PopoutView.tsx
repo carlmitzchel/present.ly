@@ -1,22 +1,23 @@
-import TeleprompterText from "@/components/TeleprompterText";
-import { useTeleprompterState } from "@/hooks/useTeleprompterState";
+import TeleprompterText from "@/features/teleprompter/components/TeleprompterText";
+import { useTeleprompterStore } from "@/features/teleprompter/store/teleprompterStore";
+import { useTeleprompterSync } from "@/features/teleprompter/hooks/useTeleprompterSync";
 import { useEffect } from "react";
 // import { Button } from "./ui/button";
 // import { Pause, Play, RotateCcw } from "lucide-react";
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 
 const PopoutView = () => {
-  const {
-    isPlaying,
-    setIsPlaying,
-    fontSize,
-    scrollSpeed,
-    textContent,
-    isFlippedHorizontal,
-    isFlippedVertical,
-    textAlign,
-    isFocusMode,
-  } = useTeleprompterState("popout");
+  const isPlaying = useTeleprompterStore((state) => state.isPlaying);
+  const setIsPlaying = useTeleprompterStore((state) => state.setIsPlaying);
+  const fontSize = useTeleprompterStore((state) => state.fontSize);
+  const scrollSpeed = useTeleprompterStore((state) => state.scrollSpeed);
+  const textContent = useTeleprompterStore((state) => state.textContent);
+  const isFlippedHorizontal = useTeleprompterStore((state) => state.isFlippedHorizontal);
+  const isFlippedVertical = useTeleprompterStore((state) => state.isFlippedVertical);
+  const textAlign = useTeleprompterStore((state) => state.textAlign);
+  const isFocusMode = useTeleprompterStore((state) => state.isFocusMode);
+
+  useTeleprompterSync("popout");
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {

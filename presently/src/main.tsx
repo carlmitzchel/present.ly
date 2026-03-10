@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
-import PopoutView from "./components/PopoutView";
+import PopoutView from "@/features/teleprompter/components/PopoutView";
 import { initDB } from "./lib/db";
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { ThemeProvider } from "./components/theme-provider";
