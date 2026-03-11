@@ -107,6 +107,12 @@ Head to the [**Releases page**](https://github.com/carlmitzchel/present.ly/relea
 
 ---
 
+## ⚠️ Windows Installation Note
+
+Windows may show a SmartScreen warning when installing. This is normal for 
+unsigned open source apps. Click **"More info"** then **"Run anyway"** to proceed.
+We are working on code signing for future releases.
+
 ## 📄 License
 
 MIT — see [LICENSE](LICENSE) for details.
