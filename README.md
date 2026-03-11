@@ -14,11 +14,13 @@ A modern, high-performance teleprompter and video recording application.
 
 Head to the [**Releases page**](https://github.com/carlmitzchel/present.ly/releases) to download the latest version for your platform.
 
-| Platform | File                  |
-| -------- | --------------------- |
-| Windows  | `.exe` installer      |
-| macOS    | `.dmg`                |
-| Linux    | `.AppImage` or `.deb` |
+| Platform | Status | File |
+|---|---|---|
+| Windows | ✅ Fully supported | `.exe` installer |
+| macOS | ⚠️ Unofficial | `.dmg` |
+| Linux | ⚠️ Unofficial | `.AppImage` or `.deb` |
+
+> macOS and Linux builds are available but not officially supported yet. Full support is coming once budget permits.
 
 ---
 
@@ -107,11 +109,15 @@ Head to the [**Releases page**](https://github.com/carlmitzchel/present.ly/relea
 
 ---
 
-## ⚠️ Windows Installation Note
+## ⚠️ Installation Notes
 
-Windows may show a SmartScreen warning when installing. This is normal for 
-unsigned open source apps. Click **"More info"** then **"Run anyway"** to proceed.
-We are working on code signing for future releases.
+**Windows**: SmartScreen may warn about an unknown publisher. Click **"More info"** then **"Run anyway"**. This is normal for unsigned open source apps.
+
+**macOS**: If you see a "damaged and can't be opened" error, open Terminal and run:
+xattr -d com.apple.quarantine /Applications/presently.app
+Or go to **System Settings → Privacy & Security** and click **"Open Anyway"**.
+
+Full code signing and notarization for all platforms is coming once budget permits.
 
 ## 📄 License
 
