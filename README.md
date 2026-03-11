@@ -6,7 +6,7 @@ A modern, high-performance teleprompter and video recording application.
 
 ## 🚀 Beta Release
 
-**Current Version:** `0.1.0-beta.1`
+**Current Version:** `0.1.0`
 
 `presently.` is currently in its beta phase. We are actively refining the core experience and adding features to make it the best tool for public speakers, YouTubers, and educators.
 
