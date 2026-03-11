@@ -2,12 +2,12 @@ name: Build Presently
 
 on:
   push:
-    branches: [main, develop]
+    branches: [main]     
     tags:
-      - 'v*'
+      - 'v*'             
   pull_request:
-    branches: [main, develop]
-  workflow_dispatch:
+    branches: [main]     
+  workflow_dispatch:     
 
 jobs:
 
