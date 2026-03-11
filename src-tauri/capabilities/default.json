@@ -17,12 +17,31 @@
     "fs:allow-write-file",
     "fs:allow-exists",
     "fs:allow-remove",
-    "shell:allow-execute",
-    "shell:allow-spawn",
-    "shell:allow-kill",
-    {"identifier": "fs:allow-read-text-file", "allow": [{"path": "$DOCUMENT/**/*"}, {"path": "$DESKTOP/**/*"}, {"path": "$DOWNLOAD/**/*"}, {"path": "d:/Projects/personal/present.ly/**/*"}]},
-    {"identifier": "fs:allow-write-file", "allow": [{"path": "$DOCUMENT/**/*"}, {"path": "$DESKTOP/**/*"}, {"path": "$DOWNLOAD/**/*"}, {"path": "d:/Projects/personal/present.ly/**/*"}]},
-    {"identifier": "fs:allow-exists", "allow": [{"path": "$DOCUMENT/**/*"}, {"path": "$DESKTOP/**/*"}, {"path": "$DOWNLOAD/**/*"}, {"path": "d:/Projects/personal/present.ly/**/*"}]},
+    {
+      "identifier": "shell:allow-execute",
+      "allow": [
+        {
+          "name": "binaries/ffmpeg",
+          "cmd": "binaries/ffmpeg",
+          "args": true,
+          "sidecar": true
+        }
+      ]
+    },
+    {
+      "identifier": "shell:allow-spawn",
+      "allow": [
+        {
+          "name": "binaries/ffmpeg",
+          "cmd": "binaries/ffmpeg",
+          "args": true,
+          "sidecar": true
+        }
+      ]
+    },
+    {"identifier": "fs:allow-read-text-file", "allow": [{"path": "$DOCUMENT/**/*"}, {"path": "$DESKTOP/**/*"}, {"path": "$DOWNLOAD/**/*"}, {"path": "$TEMP/**/*"}, {"path": "d:/Projects/personal/present.ly/**/*"}]},
+    {"identifier": "fs:allow-write-file", "allow": [{"path": "$DOCUMENT/**/*"}, {"path": "$DESKTOP/**/*"}, {"path": "$DOWNLOAD/**/*"}, {"path": "$TEMP/**/*"}, {"path": "d:/Projects/personal/present.ly/**/*"}]},
+    {"identifier": "fs:allow-exists", "allow": [{"path": "$DOCUMENT/**/*"}, {"path": "$DESKTOP/**/*"}, {"path": "$DOWNLOAD/**/*"}, {"path": "$TEMP/**/*"}, {"path": "d:/Projects/personal/present.ly/**/*"}]},
     {"identifier": "fs:allow-remove", "allow": [{"path": "$TEMP/**/*"}]},
     "core:event:allow-emit",
     "core:event:allow-emit-to",

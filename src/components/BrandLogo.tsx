@@ -1,4 +1,4 @@
-import React from "react";
+import logo from "@/assets/icon.png";
 
 interface BrandLogoProps {
   className?: string;
@@ -20,7 +20,7 @@ const BrandLogo: React.FC<BrandLogoProps> = ({
         style={{ width: size, height: size }}
       >
         <img
-          src="src/assets/icon.png"
+          src={logo}
           alt="presently. logo"
           className="w-full h-full object-contain"
         />

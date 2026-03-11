@@ -20,6 +20,7 @@ import { open as openDialog } from "@tauri-apps/plugin-dialog";
 import { writeFile, readTextFile } from "@tauri-apps/plugin-fs";
 import { join, desktopDir } from "@tauri-apps/api/path";
 import { addRecentFile, getRecentFiles, RecentFile, getSetting, setSetting } from "@/lib/db";
+import { convertWebmToMp4 } from "@/lib/convertToMp4";
 
 type RecordingState = "idle" | "recording" | "paused";
 
@@ -230,34 +231,48 @@ const RecorderView = () => {
     setRecordingState("idle");
   };
 
-  const handleSaveRecording = async () => {
-    try {
-      const isMp4 = recorderMimeType.includes("mp4");
-      const blob = new Blob(chunksRef.current, { type: recorderMimeType });
-      const buffer = await blob.arrayBuffer();
-      const now = new Date();
-      const ts = now.toISOString().replace(/[:.]/g, "-").slice(0, 19);
-      const ext = isMp4 ? "mp4" : "webm";
-      const filename = `presently_${ts}.${ext}`;
+const handleSaveRecording = async () => {
+  const blob = new Blob(chunksRef.current, { type: recorderMimeType });
+  const now = new Date();
+  const baseName = `presently_${now.toISOString().replace(/[:.]/g, "-").slice(0, 19)}`;
+  let dir = recordingSavePath || (await desktopDir());
 
-      let dir = recordingSavePath;
-      if (!dir) dir = await desktopDir();
-      const fullPath = await join(dir, filename);
-      
-      await writeFile(fullPath, new Uint8Array(buffer));
-      
-      toast.success(`Video saved successfully!`, {
-        description: `${filename} in ${dir}`,
-        action: {
-          label: "Show in folder",
-          onClick: () => revealItemInDir(fullPath),
-        },
+  const isMp4Native = recorderMimeType.includes("mp4");
+
+  if (isMp4Native) {
+    // Platform natively recorded MP4 — save directly
+    const buffer = await blob.arrayBuffer();
+    const fullPath = await join(dir, `${baseName}.mp4`);
+    await writeFile(fullPath, new Uint8Array(buffer));
+    toast.success("Video saved!", {
+      description: `${baseName}.mp4 in ${dir}`,
+      action: { label: "Show in folder", onClick: () => revealItemInDir(fullPath) },
+    });
+  } else {
+    // WebM — remux to MP4 via FFmpeg sidecar
+    const toastId = toast.loading("Converting to MP4…");
+    try {
+      const { outputPath, durationMs } = await convertWebmToMp4(
+        blob,
+        dir,
+        baseName,
+        (status) => toast.loading(status, { id: toastId })
+      );
+      toast.success("Video saved!", {
+        id: toastId,
+        description: `${baseName}.mp4 — converted in ${(durationMs / 1000).toFixed(1)}s`,
+        action: { label: "Show in folder", onClick: () => revealItemInDir(outputPath) },
       });
     } catch (err) {
-      console.error("Failed to save recording:", err);
-      toast.error("Failed to save recording. Check folder permissions.");
+      console.error("FFmpeg conversion failed:", err);
+      toast.error("MP4 conversion failed — saving as WebM instead.", { id: toastId });
+      // Fallback: save the raw WebM
+      const buffer = await blob.arrayBuffer();
+      const fullPath = await join(dir, `${baseName}.webm`);
+      await writeFile(fullPath, new Uint8Array(buffer));
     }
-  };
+  }
+};
 
   const handlePickSaveDir = async () => {
     try {

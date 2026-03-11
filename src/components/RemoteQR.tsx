@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import { useEffect, useState } from "react";
 import QRCode from "react-qr-code";
 import { invoke } from "@tauri-apps/api/core";
@@ -21,7 +23,7 @@ interface RemoteInterface {
   url: string;
 }
 
-export function RemoteQR({ children, collapsed }: RemoteQRProps) {
+export function RemoteQR({  collapsed }: RemoteQRProps) {
   const [interfaces, setInterfaces] = useState<RemoteInterface[]>([]);
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
   const [isLoading, setIsLoading] = useState(true);
