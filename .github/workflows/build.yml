@@ -16,10 +16,10 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Install Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: 20
           cache: 'npm'
@@ -30,7 +30,7 @@ jobs:
           targets: aarch64-apple-darwin,x86_64-apple-darwin
 
       - name: Rust cache
-        uses: swatinem/rust-cache@v2
+        uses: swatinem/rust-cache@v2.8.0
         with:
           workspaces: './src-tauri -> target'
 
@@ -136,7 +136,7 @@ jobs:
             libgtk-3-dev
 
       - name: Install frontend dependencies
-        run: npm install
+        run: npm ci
 
       - name: Download FFmpeg for Linux
         run: |
